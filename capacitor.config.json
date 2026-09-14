@@ -1,0 +1,20 @@
+{
+  "appId": "com.kaizenfinancas.app",
+  "appName": "Kaizen Finanças",
+  "webDir": "public",
+  "server": {
+    "url": "https://kaizenfinancas.web.app",
+    "cleartext": false
+  },
+  "plugins": {
+    "FirebaseAuthentication": {
+      "providers": [
+        "google.com"
+      ],
+      "skipNativeAuth": true
+    },
+    "LocalNotifications": {
+      "iconColor": "#3b82f6"
+    }
+  }
+}

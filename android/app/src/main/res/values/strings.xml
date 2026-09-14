@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kaizen Finanças</string>
+    <string name="title_activity_main">Kaizen Finanças</string>
+    <string name="package_name">com.kaizenfinancas.app</string>
+    <string name="custom_url_scheme">com.kaizenfinancas.app</string>
+</resources>

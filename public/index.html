@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kaizen Finanças</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" href="/icons/icon-192x192.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <header class="mobile-header">
+            <img src="/acet/icon-32x32.png" alt="Kaizen Finanças">
+        <h2>Kaizen Finanças</h2>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+           <img src="/acet/icon-64x64.png" alt="Kaizen Finanças">
+            <h2>Kaizen Finanças</h2>
+        </div>
+        <button class="btn-add" onclick="window.openModal()"><i class="fas fa-plus"></i> Nova Transação</button>
+        <button class="nav-btn active" data-tab="dashboard" onclick="window.switchTab('dashboard')"><i
+                class="fas fa-chart-pie"></i> Dashboard</button>
+        <button class="nav-btn" data-tab="history" onclick="window.switchTab('history')"><i class="fas fa-list"></i>
+            Histórico Geral</button>
+        <button class="nav-btn" data-tab="investments" onclick="window.switchTab('investments')"><i
+                class="fas fa-chart-line"></i> Investimentos</button>
+        <button class="nav-btn" data-tab="annual" onclick="window.switchTab('annual')"><i
+                class="fas fa-calendar-alt"></i> Relatório Anual</button>
+        <button class="nav-btn" data-tab="profile" onclick="window.switchTab('profile')"><i class="fas fa-user-cog"></i>
+            Meu Perfil</button>
+    </nav>
+
+    <main class="main-content">
+        <section id="dashboard" class="tab-content active">
+          <!-- Topo Responsivo Consolidado (Nome, Ícones e Filtro alinhados no Mobile) -->
+            <div class="dashboard-top-header">
+                <div class="user-info-area">
+                    <img id="dashProfileImg"
+                        src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>"
+                        style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #1e293b;">
+                    <div>
+                        <h2 id="welcomeUserText" style="margin: 0; font-size: 1rem; color: var(--text-main);">Olá!</h2>
+                        <span id="periodLabel"
+                            style="color: var(--text-light); font-size: 0.75rem; font-weight: 500;">Todo o
+                            Período</span>
+                    </div>
+                </div>
+
+                <!-- Ferramentas de Topo: Alertas, Privacidade e Filtros -->
+                <div class="filter-group" style="display: flex; align-items: center; gap: 8px;">
+                    <!-- Sistema de Alertas e Vencimentos -->
+                    <div class="notification-bell"
+                        onclick="document.getElementById('alertsDropdown').classList.toggle('active')"
+                        title="Notificações e Vencimentos" style="margin-right: 0; padding: 6px;">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="alertBadge">0</span>
+                        <div class="alerts-dropdown" id="alertsDropdown">
+                            <div class="alert-item text-center">Nenhum alerta pendente.</div>
+                        </div>
+                    </div>
+
+                    <button onclick="window.togglePrivacyMode()"
+                        style="background: var(--surface); color: var(--text-main); border: 1px solid var(--surface-border); padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 1rem;"
+                        title="Ocultar/Exibir Valores">
+                        <i class="fas fa-eye-slash" id="dashPrivacyIcon"></i>
+                    </button>
+                    <button class="btn-primary"
+                        style="padding: 8px 12px; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 600; font-size: 0.85rem;"
+                        onclick="window.openFilterModal()"><i class="fas fa-calendar-alt"></i></button>
+                </div>
+            </div> <!-- FIM DO CABEÇALHO -->
+
+                </div>
+
+            <!-- HUD / Cartões com Skeletons Ativos -->
+            <div class="hud-row">
+                <div class="hud-card card-balance">
+                    <div class="card-header">
+                        <h3>Saldo Real</h3>
+                        <span id="monthComparisonBadge" class="comp-badge"
+                            style="font-size: 0.65rem; font-weight: bold;">...</span>
+                    </div>
+                    <h2 id="totalBalance" class="skeleton">R$ 0,00</h2>
+                    <p class="projected">Projeção: <span id="projectedBalanceText" class="skeleton">R$ 0,00</span></p>
+                </div>
+
+                <div class="hud-card">
+                    <div class="card-header">
+                        <h3>Entradas</h3>
+                        <i class="fas fa-arrow-down hud-icon" style="color: var(--success);"></i>
+                    </div>
+                    <h2 id="totalIncome" class="skeleton" style="color: var(--success);">R$ 0,00</h2>
+                    <p class="pending-text" id="pendingIncomeText">A receber: R$ 0,00</p>
+                </div>
+
+                <div class="hud-card">
+                    <div class="card-header">
+                        <h3>Saídas</h3>
+                        <i class="fas fa-arrow-up hud-icon" style="color: var(--danger);"></i>
+                    </div>
+                    <h2 id="totalExpense" class="skeleton" style="color: var(--danger);">R$ 0,00</h2>
+                    <p class="pending-text" id="pendingExpenseText">A pagar: R$ 0,00</p>
+                </div>
+            </div>
+
+            <!-- Saldo por Conta -->
+            <div class="cards-grid" style="margin-top: 20px;">
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h3>Saldo por Conta / Carteira</h3>
+                    <div id="accountsList" class="accounts-grid"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="charts-grid" style="margin-top: 20px;">
+                <div class="chart-container">
+                    <h3>Comparativo Mensal (Entradas vs Saídas)</h3>
+                    <div style="height: 300px;"><canvas id="lineChart"></canvas></div>
+                </div>
+                <div class="chart-container">
+                    <h3>Despesas por Categoria</h3>
+                    <div style="height: 300px;"><canvas id="pieChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Previsão e Saúde Financeira -->
+            <div class="cards-grid" style="margin-top: 20px;">
+                <div class="card" style="grid-column: 1 / -1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="margin: 0;">Previsão de Fluxo de Caixa</h3>
+                        <div class="text-muted" style="font-size: 0.8rem; color: var(--text-light);">Próximos 6 meses</div>
+                    </div>
+                    <div id="cashFlowForecast" class="forecast-grid"></div>
+                </div>
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Saúde Financeira</h3>
+                    </div>
+                    <div id="financialHealthGrid" class="health-grid"></div>
+                </div>
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Regras de Recorrência</h3>
+                        <button class="btn-icon" onclick="window.openRecurringRuleModal()"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div id="recurringRulesList"></div>
+                </div>
+            </div>
+
+            <!-- Orçamentos e Metas -->
+            <div class="cards-grid" style="margin-top: 20px;">
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Orçamento Mensal</h3>
+                        <button class="btn-icon" onclick="window.openBudgetModal()"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div id="budgetsList"></div>
+                </div>
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Metas de Economia</h3>
+                        <button class="btn-icon" onclick="window.openGoalModal()"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div id="goalsList"></div>
+                </div>
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Dívidas e Parcelamentos</h3>
+                        <button class="btn-icon" onclick="window.openDebtModal()"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div id="debtsList"></div>
+                </div>
+            </div>
+
+            <!-- Contas a Receber e a Pagar -->
+            <div class="cards-grid" style="margin-top: 20px;">
+                <div class="card">
+                    <h3>Contas a Receber</h3>
+                    <div id="pendingIncomeList" class="pending-list" style="margin-top: 10px;"></div>
+                </div>
+                <div class="card">
+                    <h3>Contas a Pagar</h3>
+                    <div id="pendingExpenseList" class="pending-list" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+        </section>
+        <!-- SEÇÃO HISTÓRICO COM FILTROS COMBINADOS -->
+        <section id="history" class="tab-content">
+            <div class="cards-grid" style="margin-bottom: 20px;">
+                <div class="card" style="grid-column: 1 / -1;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="margin: 0; color: var(--text-main);">Histórico Geral</h3>
+                        <button id="btnMassDelete" onclick="window.deleteSelectedTransactions()"
+                            style="display: none; background: var(--danger); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-trash"></i> Excluir Selecionados (<span id="massDeleteCount">0</span>)
+                        </button>
+                    </div>
+
+                    <div class="search-bar" style="margin-bottom: 15px; position: relative;">
+                        <i class="fas fa-search"
+                            style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por descrição..."
+                            oninput="window.handleSearch()"
+                            style="width: 100%; padding: 12px 15px 12px 40px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-input); color: var(--text-main);">
+                    </div>
+
+                    <!-- Filtros Combinados (Tipo, Status, Categoria) -->
+                    <div class="filters-row">
+                        <select id="filterType" onchange="window.handleSearch()">
+                            <option value="">Todos os Tipos</option>
+                            <option value="income">Entradas</option>
+                            <option value="expense">Saídas</option>
+                            <option value="transfer">Transferências</option>
+                        </select>
+                        <select id="filterStatus" onchange="window.handleSearch()">
+                            <option value="">Todos os Status</option>
+                            <option value="pago">Pago</option>
+                            <option value="pendente">Pendente</option>
+                        </select>
+                        <select id="filterCategory" onchange="window.handleSearch()">
+                            <option value="">Todas as Categorias</option>
+                        </select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="text-align: left; border-bottom: 1px solid var(--border-color);">
+                                    <th style="width: 40px; padding: 12px; text-align: center;"><input type="checkbox"
+                                            id="selectAllChecks" onclick="window.toggleSelectAll(this)"
+                                            style="cursor: pointer;"></th>
+                                    <th style="padding: 12px;">Data</th>
+                                    <th style="padding: 12px;">Descrição</th>
+                                    <th style="padding: 12px;">Conta</th>
+                                    <th style="padding: 12px;">Categoria</th>
+                                    <th style="padding: 12px;">Tipo</th>
+                                    <th style="padding: 12px;">Valor</th>
+                                    <th style="padding: 12px;">Status</th>
+                                    <th style="padding: 12px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       <!-- INVESTIMENTOS -->
+        <section id="investments" class="tab-content">
+            <div class="cards-grid">
+                <div class="card" style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h3>Patrimônio Total em Ativos</h3>
+                        <h2 id="totalInvestments" style="color: var(--primary);">R$ 0,00</h2>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <button class="btn-secondary" onclick="window.updateStockQuotes()" style="width: auto; margin: 0; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--primary); background: transparent; color: var(--primary); cursor: pointer; font-weight: 600;"><i class="fas fa-sync"></i> Atualizar Preços</button>
+                        
+                        <button class="btn-secondary" onclick="window.openDividendModal()" style="width: auto; margin: 0; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--success); background: transparent; color: var(--success); cursor: pointer; font-weight: 600;"><i class="fas fa-hand-holding-usd"></i> Lançar Dividendo</button>
+                        
+                        <button class="btn-primary" onclick="window.openInvestmentModal()" style="width: auto; margin: 0; padding: 0.7rem 1.2rem; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 600;"><i class="fas fa-plus"></i> Novo Ativo</button>
+                    </div>
+                </div>
+                
+                <!-- Esta era a tabela que havia sido apagada acidentalmente -->
+                <div class="card" style="grid-column: 1 / -1;">
+                    <div class="table-responsive">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="text-align: left; border-bottom: 1px solid var(--border-color);">
+                                    <th style="padding: 12px;">Ativo</th>
+                                    <th style="padding: 12px;">Classe</th>
+                                    <th style="padding: 12px;">Qtd</th>
+                                    <th style="padding: 12px;">Preço Médio</th>
+                                    <th style="padding: 12px;">Valor Atual</th>
+                                    <th style="padding: 12px;">Lucro / Prejuízo</th>
+                                    <th style="padding: 12px;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="investmentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RELATÓRIO ANUAL -->
+        <section id="annual" class="tab-content">
+            <div class="cards-grid">
+                <div class="card" style="grid-column: 1 / -1;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Visão Geral do Ano</h3>
+                        <select id="selectAnnualYear" onchange="window.renderAnnualReport()"
+                            style="padding: 8px 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-input); color: var(--text-main);">
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="text-align: left; border-bottom: 1px solid var(--border-color);">
+                                    <th style="padding: 12px;">Mês</th>
+                                    <th style="padding: 12px;">Total Entradas</th>
+                                    <th style="padding: 12px;">Total Saídas</th>
+                                    <th style="padding: 12px;">Resultado Líquido</th>
+                                </tr>
+                            </thead>
+                            <tbody id="annualTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+      <!-- MEU PERFIL -->
+        <section id="profile" class="tab-content">
+            <div class="profile-header"
+                style="text-align: center; padding: 2.5rem 1rem; background: var(--surface); border-radius: 20px; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+                <label for="profilePhotoInput" style="cursor: pointer; position: relative; display: inline-block;">
+                    <img id="profileAvatar" src="https://via.placeholder.com/150/3b82f6/ffffff?text=U"
+                        style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+                    <div
+                        style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--surface);">
+                        <i class="fas fa-camera"></i></div>
+                </label>
+                <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;"
+                    onchange="window.handlePhotoUpload(event)">
+                <div class="form-group"
+                    style="margin-top: 15px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                    <input type="text" id="usernameInput" placeholder="Seu Nome"
+                        style="text-align: center; font-size: 1.2rem; font-weight: 700; background: transparent; border: none; border-bottom: 2px solid var(--border-color); color: var(--text-main); padding: 8px; outline: none; width: 100%;">
+                </div>
+                <p style="margin: 5px 0 20px 0; font-size: 0.95rem; color: var(--text-light);" id="userEmailDisplay">A
+                    carregar...</p>
+                <button onclick="window.saveProfile()" class="btn-primary"
+                    style="padding: 0.8rem 2rem; border-radius: 12px; font-weight: 600; border: none; background: var(--primary); color: white; cursor: pointer;"
+                    id="btnSaveProfile"><i class="fas fa-save"></i> Salvar Perfil</button>
+            </div>
+
+            <!-- BLOCO CORRIGIDO: Conquistas movidas para o Perfil (Sem duplicação) -->
+            <div class="settings-group"
+                style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color); padding: 1.5rem;">
+                <h4 style="margin: 0 0 15px 0; color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+                    <i class="fas fa-medal text-warning"></i> Suas Conquistas
+                     <div class="cards-grid" style="margin-bottom: 20px;">
+                <div class="card" style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05)); border: 1px solid var(--primary-soft);">
+                    <h3 style="margin: 0; font-size: 0.95rem;"><i class="fas fa-brain text-primary"></i> Insights Financeiros</h3>
+                    <div id="aiInsightsList" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+            </div>
+                </h4>
+                <div id="badgesList" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;"></div>
+            </div>
+            <!-- Gestão Dinâmica de Categorias Trigger -->
+            <div class="settings-group"
+                style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+                <h4
+                    style="padding: 1.2rem 1.2rem 0.5rem 1.2rem; margin: 0; color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+                    Configurações Avançadas</h4>
+                <div class="setting-item" onclick="document.getElementById('categoryModal').classList.add('active')"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-tags"></i></div>
+                        <span style="font-weight: 600; color: var(--text-main);">Gerenciar Categorias
+                            Personalizadas</span>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: var(--text-light);"></i>
+                </div>
+            </div>
+
+            <!-- Preferências do App -->
+            <div class="settings-group"
+                style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+                <h4
+                    style="padding: 1.2rem 1.2rem 0.5rem 1.2rem; margin: 0; color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+                    Preferências do App</h4>
+                <div class="setting-item" onclick="window.toggleTheme()"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; border-bottom: 1px solid var(--border-color); cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-moon" id="themeIconDesktop"></i></div>
+                        <span style="font-weight: 600; color: var(--text-main);">Modo Escuro / Claro</span>
+                    </div>
+                </div>
+
+                <div class="setting-item" onclick="window.togglePrivacyMode()"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; border-bottom: 1px solid var(--border-color); cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-eye-slash" id="privacyIcon"></i></div>
+                        <span style="font-weight: 600; color: var(--text-main);" id="privacyText">Ocultar Valores</span>
+                    </div>
+                </div>
+
+                <div class="setting-item" onclick="window.requestNotificationPermission()"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <span style="font-weight: 600; color: var(--text-main);">Ativar Notificações no Dispositivo</span>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: var(--text-light);"></i>
+                </div>
+            </div>
+
+            <!-- Dados e Exportações -->
+            <div class="settings-group"
+                style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+                <h4
+                    style="padding: 1.2rem 1.2rem 0.5rem 1.2rem; margin: 0; color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+                    Dados e Relatórios</h4>
+                <div class="setting-item" onclick="window.exportPDF()"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; border-bottom: 1px solid var(--border-color); cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-file-pdf"></i></div>
+                        <span style="font-weight: 600; color: var(--text-main);">Exportar Relatório em PDF</span>
+                    </div>
+                </div>
+                <div class="setting-item" onclick="window.exportCSV()"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-file-csv"></i></div>
+                        <span style="font-weight: 600; color: var(--text-main);">Exportar Dados em CSV (Excel)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segurança / Sair -->
+            <div class="settings-group"
+                style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+                <div class="setting-item" onclick="window.logout()"
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-sign-out-alt"></i></div>
+                        <span style="font-weight: 700; color: #ef4444;">Sair da Conta</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Menu Mobile Inferior -->
+    <nav class="bottom-nav">
+        <div class="nav-group-left">
+            <button class="bottom-nav-btn active" data-tab="dashboard" onclick="window.switchTab('dashboard')"><i
+                    class="fas fa-chart-pie"></i><span>Início</span></button>
+            <button class="bottom-nav-btn" data-tab="history" onclick="window.switchTab('history')"><i
+                    class="fas fa-list"></i><span>Histórico</span></button>
+        
+        </div>
+        <button class="bottom-nav-add" onclick="window.openModal()"><i class="fas fa-plus"></i></button>
+        <div class="nav-group-right">
+            <button class="bottom-nav-btn" data-tab="investments" onclick="window.switchTab('investments')"><i
+                    class="fas fa-chart-line"></i><span>Ativos</span></button>
+            <button class="bottom-nav-btn" data-tab="profile" onclick="window.switchTab('profile')"><i
+                    class="fas fa-user"></i><span>Perfil</span></button>
+        </div>
+    </nav>
+
+    <!-- ================= TODOS OS MODAIS ================= -->
+    <!-- Modal de Nova Transação -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Nova Transação</h2>
+                <button class="close-btn" onclick="window.closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="transactionForm" novalidate>
+               <!-- TIPO DE TRANSAÇÃO (Mantém o original) -->
+                <div class="form-group">
+                    <label>Tipo de Transação</label>
+                    <div class="type-selector">
+                        <input type="radio" name="type" value="income" id="typeIncome" checked>
+                        <label for="typeIncome" class="btn-type btn-income"><i class="fas fa-arrow-down"></i> Entrada</label>
+                        <input type="radio" name="type" value="expense" id="typeExpense">
+                        <label for="typeExpense" class="btn-type btn-expense"><i class="fas fa-arrow-up"></i> Saída</label>
+                        <input type="radio" name="type" value="transfer" id="typeTransfer">
+                        <label for="typeTransfer" class="btn-type btn-transfer"><i class="fas fa-exchange-alt"></i> Transferência</label>
+                    </div>
+                </div>
+
+                <!-- BLOCO CORRIGIDO: Descrição, Moeda, Valor, Data e Tags -->
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="margin: 0;">Descrição</label>
+                        <button type="button" class="btn-icon text-primary" onclick="window.scanReceiptQR()" title="Ler Nota Fiscal (QR Code)" style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.1); padding: 4px 10px; border-radius: 8px;"><i class="fas fa-qrcode"></i> Ler Nota (App)</button>
+                    </div>
+                    <input type="text" id="descInput" required placeholder="Ex: Conta de Luz">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Moeda</label>
+                        <select id="currencyInput">
+                            <option value="1">BRL (R$)</option>
+                            <option value="5.60">USD (US$)</option>
+                            <option value="6.10">EUR (€)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Valor (Orig.)</label>
+                        <input type="number" id="valueInput" step="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data</label>
+                        <input type="date" id="dateInput" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags de Rateio (Opcional)</label>
+                    <input type="text" id="tagsInput" placeholder="Ex: #viagem_sp, #projeto">
+                </div>
+                <!-- FIM DO BLOCO CORRIGIDO -->
+
+                <div class="form-group">
+                    <label>Data de Vencimento (Opcional)</label>
+                    <input type="date" id="dueDateInput">
+                </div>
+                <!-- O RESTANTE DO FORMULÁRIO CONTINUA IGUAL... -->
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;" id="categoryGroup"><label>Categoria</label><select id="categoryInput"
+                            required></select></div>
+                    <div class="form-group" style="flex: 1;"><label>Conta/Carteira</label>
+                        <select id="accountInput" required>
+                            <option value="Nubank">Nubank</option>
+                            <option value="Itaú">Itaú</option>
+                            <option value="Bradesco">Bradesco</option>
+                            <option value="Dinheiro">Dinheiro Físico</option>
+                            <option value="Inter">Inter</option>
+                            <option value="PIX">PIX</option>
+                            <option value="PicPay">PicPay</option>
+                            <option value="BV Financeira">BV Financeira</option>
+                            <option value="Porto Seguro">Porto Seguro</option>
+                            <option value="Banco do Brasil">Banco do Brasil</option>
+                            <option value="Santander">Santander</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" id="transferSection" style="display: none; background: var(--background); padding: 12px; border-radius: 12px; border: 1px solid var(--surface-border);">
+                    <label style="color: var(--primary); font-weight: 700;"><i class="fas fa-exchange-alt"></i> Transferência entre contas</label>
+                    <div class="form-row" style="margin-top: 8px;">
+                        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <label>Origem</label>
+                            <select id="transferFromAccount">
+                                <option value="Nubank">Nubank</option>
+                                <option value="Itaú">Itaú</option>
+                                <option value="Bradesco">Bradesco</option>
+                                <option value="Dinheiro">Dinheiro Físico</option>
+                                <option value="Inter">Inter</option>
+                                <option value="PIX">PIX</option>
+                                <option value="PicPay">PicPay</option>
+                                <option value="BV Financeira">BV Financeira</option>
+                                <option value="Porto Seguro">Porto Seguro</option>
+                                <option value="Banco do Brasil">Banco do Brasil</option>
+                                <option value="Santander">Santander</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <label>Destino</label>
+                            <select id="transferToAccount">
+                                <option value="Nubank">Nubank</option>
+                                <option value="Itaú">Itaú</option>
+                                <option value="Bradesco">Bradesco</option>
+                                <option value="Dinheiro">Dinheiro Físico</option>
+                                <option value="Inter">Inter</option>
+                                <option value="PIX">PIX</option>
+                                <option value="PicPay">PicPay</option>
+                                <option value="BV Financeira">BV Financeira</option>
+                                <option value="Porto Seguro">Porto Seguro</option>
+                                <option value="Banco do Brasil">Banco do Brasil</option>
+                                <option value="Santander">Santander</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status da Transação -->
+                <div class="form-group">
+                    <label>Status</label>
+                    <div class="status-toggle">
+                        <label>
+                            <input type="radio" name="status" value="pago" id="statusPaid" checked>
+                            <span><i class="fas fa-check-circle"></i> Já Pago</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="status" value="pendente" id="statusPending">
+                            <span><i class="fas fa-clock"></i> Pendente</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Alocação em Metas -->
+                <div class="form-group" id="goalAllocationContainer"
+                    style="display: block; background: var(--background); padding: 12px; border-radius: 12px; border: 1px solid var(--surface-border);">
+                    <label style="color: var(--primary); font-weight: 700;"><i class="fas fa-bullseye"></i> Direcionar
+                        parte para Meta?</label>
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <select id="allocationGoalId" style="flex: 2;">
+                            <option value="">Selecione uma meta...</option>
+                        </select>
+                        <input type="number" id="allocationAmount" step="0.01" placeholder="Valor (R$)"
+                            style="flex: 1;">
+                    </div>
+                </div>
+
+                <!-- Recorrência / Repetição -->
+                <div class="form-group"
+                    style="background: var(--background); padding: 12px; border-radius: 12px; border: 1px solid var(--surface-border);">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 0;">
+                        <input type="checkbox" id="isRecurring" onchange="window.toggleRecurrenceFields(this)"
+                            style="width: 18px; height: 18px; accent-color: var(--primary);">
+                        <span style="font-weight: 700; color: var(--text-main);"><i
+                                class="fas fa-redo-alt text-primary"></i> Repetir Transação</span>
+                    </label>
+                    <div id="recurringFields" style="display: none; margin-top: 10px; gap: 10px;" class="form-row">
+                        <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                            <label style="font-size: 0.75rem;">Frequência</label>
+                            <select id="recurrenceFreq">
+                                <option value="monthly">Mensal</option>
+                                <option value="weekly">Semanal</option>
+                                <option value="yearly">Anual</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                            <label style="font-size: 0.75rem;">Número de Vezes</label>
+                            <input type="number" id="recurrenceTimes" min="2" max="60" value="2" placeholder="Ex: 12">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">Salvar Transação</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Gestão de Categorias -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Gerenciar Categorias</h2>
+                <button class="close-btn"
+                    onclick="document.getElementById('categoryModal').classList.remove('active')"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group">
+                <label>Nova Categoria</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="newCategoryName" placeholder="Ex: Investimentos Pessoais" style="flex:2;">
+                    <select id="newCategoryType" style="flex:1;">
+                        <option value="expense">Saída</option>
+                        <option value="income">Entrada</option>
+                    </select>
+                    <button type="button" onclick="window.addCustomCategory()" class="btn-primary"
+                        style="padding: 0 15px; border-radius: 8px; border:none; background:var(--primary); color:white; cursor:pointer;"><i
+                            class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <hr style="border: 1px solid var(--surface-border); margin: 15px 0;">
+            <ul id="customCategoryList"
+                style="list-style: none; display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal de Filtro de Período -->
+    <div class="modal-overlay" id="filterModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Filtrar Período</h2><button class="close-btn" onclick="window.closeFilterModal()"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group"><label>Data de Início:</label><input type="date" id="startDateFilter"></div>
+            <div class="form-group"><label>Data de Fim:</label><input type="date" id="endDateFilter"></div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-submit" onclick="window.applyFilter()"
+                    style="flex: 1; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600;">Aplicar</button>
+                <button class="btn-submit" onclick="window.clearFilter()"
+                    style="flex: 1; background: var(--background); color: var(--text-main); border: 1px solid var(--surface-border); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600;">Limpar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Dívidas -->
+    <div class="modal-overlay" id="debtModal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2>Nova Dívida / Parcelamento</h2>
+                <button class="close-btn" onclick="window.closeDebtModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="debtForm" onsubmit="event.preventDefault(); window.saveDebt();" novalidate>
+                <div class="form-group"><label>Nome da dívida</label><input type="text" id="debtTitleInput" required placeholder="Ex: Financiamento carro"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;"><label>Valor total (R$)</label><input type="number" id="debtTotalInput" step="0.01" required placeholder="0.00"></div>
+                    <div class="form-group" style="flex: 1;"><label>Valor já pago</label><input type="number" id="debtPaidInput" step="0.01" value="0" placeholder="0.00"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;"><label>Taxa de juros (%)</label><input type="number" id="debtInterestInput" step="0.01" value="0" placeholder="0.00"></div>
+                    <div class="form-group" style="flex: 1;"><label>Vencimento</label><input type="date" id="debtDueDateInput"></div>
+                </div>
+                <button type="submit" class="btn-submit" style="margin-top: 15px;">Salvar Dívida</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Pagamento de Dívida -->
+    <div class="modal-overlay" id="debtPaymentModal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2>Adicionar Pagamento</h2>
+                <button class="close-btn" onclick="window.closeDebtPaymentModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group">
+                <p id="debtPaymentDescription" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;"></p>
+                <label>Valor do pagamento (R$)</label>
+                <input type="number" id="debtPaymentAmountInput" min="0.01" step="0.01" required placeholder="0,00">
+                <small style="color: var(--text-light); font-size: 0.75rem; display: block; margin-top: 8px;">
+                    O valor será somado ao total já pago e não poderá ultrapassar o saldo restante.
+                </small>
+            </div>
+            <button class="btn-submit" onclick="window.saveDebtPayment()" style="margin-top: 15px;">Registrar Pagamento</button>
+        </div>
+    </div>
+
+    <!-- Modal de Regra de Recorrência -->
+    <div class="modal-overlay" id="recurringRuleModal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2>Nova Regra de Recorrência</h2>
+                <button class="close-btn" onclick="window.closeRecurringRuleModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="recurringRuleForm" onsubmit="event.preventDefault(); window.saveRecurringRule();" novalidate>
+                <div class="form-group"><label>Nome</label><input type="text" id="ruleTitleInput" required placeholder="Ex: Salário, Luz, Internet"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Tipo</label>
+                        <select id="ruleTypeInput" required>
+                            <option value="income">Entrada</option>
+                            <option value="expense">Saída</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Frequência</label>
+                        <select id="ruleCadenceInput" required>
+                            <option value="monthly">Mensal</option>
+                            <option value="weekly">Semanal</option>
+                            <option value="yearly">Anual</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Categoria</label>
+                        <select id="ruleCategoryInput" required></select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Valor (R$)</label>
+                        <input type="number" id="ruleAmountInput" step="0.01" required placeholder="0.00">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" style="margin-top: 15px;">Salvar Regra</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Metas com Prazos -->
+    <div class="modal-overlay" id="goalModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Nova Meta de Economia</h2><button class="close-btn" onclick="window.closeGoalModal()"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="event.preventDefault(); window.saveGoal();" id="formGoal" novalidate>
+                <div class="form-group"><label>Título da Meta</label><input type="text" id="goalTitleInput" required
+                        placeholder="Ex: Viagem"></div>
+                <div class="form-group"><label>Valor Alvo (R$)</label><input type="number" id="goalTargetInput"
+                        step="0.01" required placeholder="0.00"></div>
+                <div class="form-group"><label>Prazo de Conclusão (Opcional)</label><input type="date"
+                        id="goalDeadlineInput"></div>
+                <button type="submit" class="btn-submit" style="margin-top: 15px;">Criar Meta</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Ajuste de Saldo -->
+    <div class="modal-overlay" id="editBalanceModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Ajustar Saldo</h2>
+                <button class="close-btn" onclick="window.closeEditBalanceModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group">
+                <label id="editBalanceAccountLabel"
+                    style="color: var(--primary); font-size: 1rem; font-weight: 800; margin-bottom: 10px;">Conta</label>
+                <label>Novo Saldo Real (R$)</label>
+                <input type="number" id="newBalanceInput" step="0.01" required placeholder="0.00">
+                <small style="color: var(--text-light); font-size: 0.75rem; display: block; margin-top: 8px;">
+                    O sistema criará uma transação de compensação invisível nos relatórios para atingir este exato
+                    saldo.
+                </small>
+            </div>
+            <button class="btn-submit" onclick="window.saveNewBalance()" style="margin-top: 15px;">Atualizar
+                Saldo</button>
+        </div>
+    </div>
+
+    <!-- Modal de Depósito em Meta -->
+    <div class="modal-overlay" id="addFundsGoalModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Adicionar Valor à Meta</h2>
+                <button class="close-btn" onclick="window.closeAddFundsModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group">
+                <p id="addFundsGoalText" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;"></p>
+                <label>Valor do Depósito (R$)</label>
+                <input type="number" id="addFundsInput" step="0.01" required placeholder="0.00">
+            </div>
+            <button class="btn-submit" onclick="window.saveGoalDeposit()" style="margin-top: 15px;">Confirmar
+                Depósito</button>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Limite do Orçamento -->
+    <div class="modal-overlay" id="editBudgetModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Editar Limite do Orçamento</h2>
+                <button class="close-btn" onclick="window.closeEditBudgetModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group">
+                <label id="editBudgetCategoryLabel"
+                    style="color: var(--primary); font-size: 1rem; font-weight: 800; margin-bottom: 10px;">Categoria</label>
+                <label>Novo Limite Mensal (R$)</label>
+                <input type="number" id="editBudgetLimitInput" step="0.01" required placeholder="0.00">
+            </div>
+            <button class="btn-submit" onclick="window.saveEditBudget()" style="margin-top: 15px;">Atualizar
+                Limite</button>
+        </div>
+    </div>
+
+    <!-- Demais modais padrão -->
+    <div class="modal-overlay" id="investmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Ativo</h2><button class="close-btn" onclick="window.closeInvestmentModal()"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <form id="investmentForm" onsubmit="event.preventDefault(); window.saveInvestment();">
+                <div class="form-group"><label>Nome</label><input type="text" id="invNameInput" required></div>
+                <div class="form-group"><label>Classe</label><select id="invClassInput">
+                        <option value="Ações">Ações</option>
+                        <option value="Renda Fixa">Renda Fixa</option>
+                    </select></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Qtd</label><input type="number" id="invQtyInput" step="any" required>
+                    </div>
+                    <div class="form-group"><label>Preço Médio</label><input type="number" id="invPriceInput"
+                            step="0.01" required></div>
+                </div>
+                <div class="form-group"><label>Valor Atual</label><input type="number" id="invCurrentValInput"
+                        step="0.01" required></div><button type="submit" class="btn-submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="budgetModal">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header">
+                <h2>Orçamento</h2><button class="close-btn" onclick="window.closeBudgetModal()"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="event.preventDefault(); window.saveBudget();">
+                <div class="form-group"><label>Categoria</label><select id="budgetCategoryInput"></select></div>
+                <div class="form-group"><label>Limite</label><input type="number" id="budgetLimitInput" step="0.01"
+                        required></div><button type="submit" class="btn-submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="genericConfirmModal">
+        <div class="modal-content modal-alert" style="max-width:360px;text-align:center;">
+            <div style="font-size:2.5rem;color:var(--danger);margin-bottom:10px;" id="confirmModalIcon"><i
+                    class="fas fa-exclamation-circle"></i></div>
+            <h2 style="margin-bottom:10px;" id="confirmModalTitle">Confirmação</h2>
+            <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:20px;" id="confirmModalText">Deseja
+                prosseguir?</p>
+            <div class="modal-actions" style="display:flex;gap:10px;"><button class="btn-secondary"
+                    onclick="window.closeGenericConfirmModal()" style="flex:1;">Cancelar</button><button
+                    class="btn-danger" id="genericConfirmBtn" style="flex:1;">Confirmar</button></div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <!-- Modal Novo Cartão de Crédito -->
+    <div class="modal-overlay" id="creditCardModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Novo Cartão</h2>
+                <button class="close-btn" onclick="document.getElementById('creditCardModal').classList.remove('active')"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="event.preventDefault(); window.saveCreditCard();" id="creditCardForm" novalidate>
+                <div class="form-group"><label>Nome do Cartão</label><input type="text" id="ccNameInput" required placeholder="Ex: Nubank Platinum"></div>
+                <div class="form-group"><label>Limite Total (R$)</label><input type="number" id="ccLimitInput" step="0.01" required placeholder="0.00"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;"><label>Dia Fechamento</label><input type="number" id="ccCloseDay" min="1" max="31" required></div>
+                    <div class="form-group" style="flex:1;"><label>Dia Vencimento</label><input type="number" id="ccDueDay" min="1" max="31" required></div>
+                </div>
+                <button type="submit" class="btn-submit" style="margin-top: 15px;">Adicionar Cartão</button>
+            </form>
+        </div>
+    </div>
+<!-- Modal de Dividendos -->
+    <div class="modal-overlay" id="dividendModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Lançar Dividendo/Rendimento</h2>
+                <button class="close-btn" onclick="window.closeDividendModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="event.preventDefault(); window.saveDividend();" id="dividendForm">
+                <div class="form-group"><label>Ativo Pagador</label><select id="divAssetInput" required></select></div>
+                <div class="form-group"><label>Valor Recebido (R$)</label><input type="number" id="divValueInput" step="0.01" required placeholder="0.00"></div>
+                <div class="form-group"><label>Conta de Destino</label><input type="text" id="divAccountInput" value="Nubank" required></div>
+                <button type="submit" class="btn-submit" style="margin-top: 15px;">Salvar Rendimento</button>
+            </form>
+        </div>
+    </div>
+    <!-- Script Modular Principa
+     l -->
+    <script type="module" src="/js/script.js?v=20260910-1647"></script>
+</body>
+
+</html>
