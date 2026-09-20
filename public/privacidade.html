@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Política de Privacidade - Kaizen Finanças</title>
+    <meta name="theme-color" content="#3b82f6">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-strong: #2563eb;
+            --success: #10b981;
+            --background: #edf3f8;
+            --surface: rgba(255, 255, 255, 0.92);
+            --surface-border: rgba(148, 163, 184, 0.28);
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --card-shadow: 0 18px 40px -18px rgba(15, 23, 42, 0.25);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #07111d;
+                --surface: rgba(15, 23, 42, 0.94);
+                --surface-border: rgba(148, 163, 184, 0.18);
+                --text-main: #f8fafc;
+                --text-light: #94a3b8;
+                --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.15), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.12), transparent 26%),
+                var(--background);
+            color: var(--text-main);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--surface);
+            backdrop-filter: blur(18px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--surface-border);
+        }
+
+        .header-section {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+            color: var(--primary);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.2rem auto;
+            border: 1px solid var(--surface-border);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .last-updated {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin: 2.5rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        p,
+        li {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        strong {
+            color: var(--text-main);
+        }
+
+        ul {
+            margin-bottom: 1.5rem;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 22px;
+        }
+
+        ul li::before {
+            content: "\f054";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.65rem;
+            color: var(--primary);
+        }
+
+        ul ul {
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+        }
+
+        ul ul li::before {
+            content: "\f111";
+            font-size: 0.4rem;
+            top: 6px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            background: var(--background);
+            border: 1px solid var(--surface-border);
+            padding: 10px 18px;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(59, 130, 246, 0.08);
+            color: var(--primary);
+            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateX(-4px);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar ao App</a>
+
+        <div class="header-section">
+            <div class="header-icon"><i class="fas fa-shield-alt"></i></div>
+            <h1>Política de <span>Privacidade</span></h1>
+            <div class="last-updated">Última atualização: Setembro de 2026</div>
+        </div>
+
+        <p>A sua privacidade é a nossa prioridade. Esta Política de Privacidade explica de forma transparente como o
+            aplicativo <strong>Kaizen Finanças</strong> coleta, utiliza, protege e trata os seus dados pessoais e
+            financeiros.</p>
+
+        <h2><i class="fas fa-database"></i> 1. Dados que Coletamos</h2>
+        <ul>
+            <li><strong>Informações de Conta:</strong> Quando se cadastra, coletamos seu e-mail e nome (opcional)
+                exclusivamente para criar e autenticar sua conta de forma segura via Google Firebase.</li>
+            <li><strong>Dados Financeiros:</strong> Informações sobre transações, metas, orçamentos, dívidas e
+                investimentos inseridos manualmente por você no aplicativo.</li>
+            <li><strong>Permissões do Dispositivo:</strong>
+                <ul>
+                    <li><strong>Câmera:</strong> Solicitada exclusivamente para a leitura local de QR Codes de notas
+                        fiscais. Nenhuma imagem é processada fora do seu aparelho ou salva nos nossos servidores.</li>
+                    <li><strong>Notificações:</strong> Solicitada para enviar alertas locais sobre o vencimento de
+                        contas e faturas.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2><i class="fas fa-tasks"></i> 2. Como Usamos os Seus Dados</h2>
+        <p>Os seus dados são utilizados estritamente para o funcionamento do aplicativo, incluindo:</p>
+        <ul>
+            <li>Autenticação e segurança da sua conta.</li>
+            <li>Processamento e exibição de relatórios, gráficos e insights do seu fluxo de caixa e patrimônio.</li>
+            <li>Sincronização na nuvem para que você possa acessar seus dados de múltiplos dispositivos com segurança e
+                sem perda de informações.</li>
+        </ul>
+
+        <h2><i class="fas fa-lock"></i> 3. Armazenamento e Segurança</h2>
+        <p>Os seus dados são processados e armazenados nos servidores seguros do <strong>Google Cloud (Firestore e
+                Firebase Authentication)</strong>, que contam com criptografia de ponta a ponta (em trânsito e em
+            repouso). O Kaizen Finanças não armazena a sua senha em texto puro, delegando a autenticação inteiramente
+            aos protocolos seguros do Google.</p>
+
+        <div class="highlight-box">
+            <p><i class="fas fa-user-shield" style="color: var(--primary); margin-right: 8px;"></i> Nós não vendemos,
+                alugamos ou compartilhamos seus dados financeiros ou pessoais com terceiros para fins de marketing ou
+                publicidade.</p>
+        </div>
+
+        <h2><i class="fas fa-network-wired"></i> 4. Compartilhamento de Dados</h2>
+        <p>As únicas integrações externas ocorrem para funcionalidades vitais solicitadas por você:</p>
+        <ul>
+            <li><strong>APIs Financeiras:</strong> A cotação de ativos da bolsa de valores é feita de forma anônima
+                através da API <em>Brapi</em>, usando apenas o código da ação (ex: PETR4), sem enviar seus dados
+                pessoais ou a quantidade de cotas que você possui.</li>
+        </ul>
+
+        <h2><i class="fas fa-user-slash"></i> 5. Seus Direitos e Exclusão de Conta</h2>
+        <p>Você tem total controle sobre seus dados. A qualquer momento, você pode excluir permanentemente sua conta e
+            <strong>todos os dados financeiros associados</strong> diretamente pelo aplicativo (na seção "Meu Perfil" >
+            "Sair da Conta" ou através dos painéis de gestão), garantindo o seu direito ao esquecimento.</p>
+
+        <h2><i class="fas fa-envelope"></i> 6. Contato</h2>
+        <p>Se tiver dúvidas sobre esta Política de Privacidade, entre em contato conosco através dos canais de suporte
+            oficiais do desenvolvedor Kayrom Samuel.
+        </p>
+    </div>
+</body>
+
+</html>

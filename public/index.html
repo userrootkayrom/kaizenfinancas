@@ -16,17 +16,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <!-- Meta Description Padrão (Para SEO do Google) -->
+<meta name="description" content="Kaizen Finanças: O seu gestor financeiro inteligente. Controle gastos, estabeleça metas, acompanhe investimentos e alcance a sua independência financeira.">
+
+<!-- Open Graph (Para partilhas no WhatsApp, LinkedIn, Facebook, Telegram) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kaizenfinancas.firebaseapp.com">
+<meta property="og:title" content="Kaizen Finanças - Gestão Inteligente">
+<meta property="og:description" content="Controle gastos, planeie orçamentos e acompanhe os seus investimentos num só lugar.">
 </head>
 
 <body>
     <header class="mobile-header">
-            <img src="/acet/icon-32x32.png" alt="Kaizen Finanças">
+        <img src="/acet/icon-32x32.png" alt="Kaizen Finanças">
         <h2>Kaizen Finanças</h2>
     </header>
 
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-           <img src="/acet/icon-64x64.png" alt="Kaizen Finanças">
+            <img src="/acet/icon-64x64.png" alt="Kaizen Finanças">
             <h2>Kaizen Finanças</h2>
         </div>
         <button class="btn-add" onclick="window.openModal()"><i class="fas fa-plus"></i> Nova Transação</button>
@@ -44,7 +52,7 @@
 
     <main class="main-content">
         <section id="dashboard" class="tab-content active">
-          <!-- Topo Responsivo Consolidado (Nome, Ícones e Filtro alinhados no Mobile) -->
+            <!-- Topo Responsivo Consolidado (Nome, Ícones e Filtro alinhados no Mobile) -->
             <div class="dashboard-top-header">
                 <div class="user-info-area">
                     <img id="dashProfileImg"
@@ -82,7 +90,7 @@
                 </div>
             </div> <!-- FIM DO CABEÇALHO -->
 
-                </div>
+            </div>
 
             <!-- HUD / Cartões com Skeletons Ativos -->
             <div class="hud-row">
@@ -140,22 +148,27 @@
             <!-- Previsão e Saúde Financeira -->
             <div class="cards-grid" style="margin-top: 20px;">
                 <div class="card" style="grid-column: 1 / -1;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                         <h3 style="margin: 0;">Previsão de Fluxo de Caixa</h3>
-                        <div class="text-muted" style="font-size: 0.8rem; color: var(--text-light);">Próximos 6 meses</div>
+                        <div class="text-muted" style="font-size: 0.8rem; color: var(--text-light);">Próximos 6 meses
+                        </div>
                     </div>
                     <div id="cashFlowForecast" class="forecast-grid"></div>
                 </div>
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3>Saúde Financeira</h3>
                     </div>
                     <div id="financialHealthGrid" class="health-grid"></div>
                 </div>
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3>Regras de Recorrência</h3>
-                        <button class="btn-icon" onclick="window.openRecurringRuleModal()"><i class="fas fa-plus"></i></button>
+                        <button class="btn-icon" onclick="window.openRecurringRuleModal()"><i
+                                class="fas fa-plus"></i></button>
                     </div>
                     <div id="recurringRulesList"></div>
                 </div>
@@ -264,23 +277,30 @@
             </div>
         </section>
 
-       <!-- INVESTIMENTOS -->
+        <!-- INVESTIMENTOS -->
         <section id="investments" class="tab-content">
             <div class="cards-grid">
-                <div class="card" style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div class="card"
+                    style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                     <div>
                         <h3>Patrimônio Total em Ativos</h3>
                         <h2 id="totalInvestments" style="color: var(--primary);">R$ 0,00</h2>
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                        <button class="btn-secondary" onclick="window.updateStockQuotes()" style="width: auto; margin: 0; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--primary); background: transparent; color: var(--primary); cursor: pointer; font-weight: 600;"><i class="fas fa-sync"></i> Atualizar Preços</button>
-                        
-                        <button class="btn-secondary" onclick="window.openDividendModal()" style="width: auto; margin: 0; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--success); background: transparent; color: var(--success); cursor: pointer; font-weight: 600;"><i class="fas fa-hand-holding-usd"></i> Lançar Dividendo</button>
-                        
-                        <button class="btn-primary" onclick="window.openInvestmentModal()" style="width: auto; margin: 0; padding: 0.7rem 1.2rem; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 600;"><i class="fas fa-plus"></i> Novo Ativo</button>
+                        <button class="btn-secondary" onclick="window.updateStockQuotes()"
+                            style="width: auto; margin: 0; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--primary); background: transparent; color: var(--primary); cursor: pointer; font-weight: 600;"><i
+                                class="fas fa-sync"></i> Atualizar Preços</button>
+
+                        <button class="btn-secondary" onclick="window.openDividendModal()"
+                            style="width: auto; margin: 0; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--success); background: transparent; color: var(--success); cursor: pointer; font-weight: 600;"><i
+                                class="fas fa-hand-holding-usd"></i> Lançar Dividendo</button>
+
+                        <button class="btn-primary" onclick="window.openInvestmentModal()"
+                            style="width: auto; margin: 0; padding: 0.7rem 1.2rem; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 600;"><i
+                                class="fas fa-plus"></i> Novo Ativo</button>
                     </div>
                 </div>
-                
+
                 <!-- Esta era a tabela que havia sido apagada acidentalmente -->
                 <div class="card" style="grid-column: 1 / -1;">
                     <div class="table-responsive">
@@ -334,7 +354,7 @@
             </div>
         </section>
 
-      <!-- MEU PERFIL -->
+        <!-- MEU PERFIL -->
         <section id="profile" class="tab-content">
             <div class="profile-header"
                 style="text-align: center; padding: 2.5rem 1rem; background: var(--surface); border-radius: 20px; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
@@ -343,7 +363,8 @@
                         style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
                     <div
                         style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--surface);">
-                        <i class="fas fa-camera"></i></div>
+                        <i class="fas fa-camera"></i>
+                    </div>
                 </label>
                 <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;"
                     onchange="window.handlePhotoUpload(event)">
@@ -362,14 +383,18 @@
             <!-- BLOCO CORRIGIDO: Conquistas movidas para o Perfil (Sem duplicação) -->
             <div class="settings-group"
                 style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color); padding: 1.5rem;">
-                <h4 style="margin: 0 0 15px 0; color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+                <h4
+                    style="margin: 0 0 15px 0; color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
                     <i class="fas fa-medal text-warning"></i> Suas Conquistas
-                     <div class="cards-grid" style="margin-bottom: 20px;">
-                <div class="card" style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05)); border: 1px solid var(--primary-soft);">
-                    <h3 style="margin: 0; font-size: 0.95rem;"><i class="fas fa-brain text-primary"></i> Insights Financeiros</h3>
-                    <div id="aiInsightsList" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;"></div>
-                </div>
-            </div>
+                    <div class="cards-grid" style="margin-bottom: 20px;">
+                        <div class="card"
+                            style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05)); border: 1px solid var(--primary-soft);">
+                            <h3 style="margin: 0; font-size: 0.95rem;"><i class="fas fa-brain text-primary"></i>
+                                Insights Financeiros</h3>
+                            <div id="aiInsightsList"
+                                style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;"></div>
+                        </div>
+                    </div>
                 </h4>
                 <div id="badgesList" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;"></div>
             </div>
@@ -384,7 +409,8 @@
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div
                             style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-tags"></i></div>
+                            <i class="fas fa-tags"></i>
+                        </div>
                         <span style="font-weight: 600; color: var(--text-main);">Gerenciar Categorias
                             Personalizadas</span>
                     </div>
@@ -403,7 +429,8 @@
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div
                             style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-moon" id="themeIconDesktop"></i></div>
+                            <i class="fas fa-moon" id="themeIconDesktop"></i>
+                        </div>
                         <span style="font-weight: 600; color: var(--text-main);">Modo Escuro / Claro</span>
                     </div>
                 </div>
@@ -413,7 +440,8 @@
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div
                             style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-eye-slash" id="privacyIcon"></i></div>
+                            <i class="fas fa-eye-slash" id="privacyIcon"></i>
+                        </div>
                         <span style="font-weight: 600; color: var(--text-main);" id="privacyText">Ocultar Valores</span>
                     </div>
                 </div>
@@ -425,7 +453,8 @@
                             style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-bell"></i>
                         </div>
-                        <span style="font-weight: 600; color: var(--text-main);">Ativar Notificações no Dispositivo</span>
+                        <span style="font-weight: 600; color: var(--text-main);">Ativar Notificações no
+                            Dispositivo</span>
                     </div>
                     <i class="fas fa-chevron-right" style="color: var(--text-light);"></i>
                 </div>
@@ -442,7 +471,8 @@
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div
                             style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-file-pdf"></i></div>
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
                         <span style="font-weight: 600; color: var(--text-main);">Exportar Relatório em PDF</span>
                     </div>
                 </div>
@@ -451,26 +481,84 @@
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div
                             style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-file-csv"></i></div>
+                            <i class="fas fa-file-csv"></i>
+                        </div>
                         <span style="font-weight: 600; color: var(--text-main);">Exportar Dados em CSV (Excel)</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Segurança / Sair -->
-            <div class="settings-group"
-                style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
-                <div class="setting-item" onclick="window.logout()"
-                    style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; cursor: pointer;">
+            <!-- Suporte e Contato -->
+            <div class="settings-group" style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+                <h4 style="padding: 1.2rem 1.2rem 0.5rem 1.2rem; margin: 0; color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">Suporte e Contato</h4>
+                
+                <div class="setting-item" onclick="window.location.href='mailto:contato.kayrom@gmail.com'" style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; border-bottom: 1px solid var(--border-color); cursor: pointer;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div
-                            style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-sign-out-alt"></i></div>
-                        <span style="font-weight: 700; color: #ef4444;">Sair da Conta</span>
+                        <div style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span style="font-weight: 600; color: var(--text-main);">contato.kayrom@gmail.com</span>
+                    </div>
+                    <i class="fas fa-external-link-alt" style="color: var(--text-light); font-size: 0.8rem;"></i>
+                </div>
+
+                <div class="setting-item" onclick="window.open('https://instagram.com/https_kayrom', '_blank')" style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 40px; height: 40px; background: rgba(225, 48, 108, 0.1); color: #E1306C; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                        <span style="font-weight: 600; color: var(--text-main);">@https_kayrom</span>
+                    </div>
+                    <i class="fas fa-external-link-alt" style="color: var(--text-light); font-size: 0.8rem;"></i>
+                </div>
+            </div>
+
+            <!-- Segurança e Zona de Perigo -->
+            <div class="settings-group" style="background: var(--surface); border-radius: 16px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+                <div class="setting-item" onclick="window.logout()" style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; border-bottom: 1px solid var(--border-color); cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <span style="font-weight: 700; color: #f59e0b;">Sair da Conta</span>
+                    </div>
+                </div>
+
+                <div class="setting-item" onclick="window.openDeleteAccountModal()" style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; cursor: pointer;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <span style="font-weight: 700; color: #ef4444;">Excluir Conta e Apagar Dados</span>
                     </div>
                 </div>
             </div>
-        </section>
+
+          <!-- ADICIONE O RODAPÉ AQUI -->
+            <div style="text-align: center; margin-top: 15px; padding-bottom: 40px; font-size: 0.85rem;">
+                <!-- Links Legais -->
+                <div style="margin-bottom: 15px;">
+                    <a href="termos.html" style="color: var(--text-light); text-decoration: none; font-weight: 600; transition: color 0.2s;">Termos de Uso</a> 
+                    <span style="color: var(--surface-border); margin: 0 8px;">|</span>
+                    <a href="privacidade.html" style="color: var(--text-light); text-decoration: none; font-weight: 600; transition: color 0.2s;">Política de Privacidade</a>
+                </div>
+                
+                <!-- Linha Divisória -->
+                <div style="background: var(--surface-border); height: 1px; width: 50px; margin: 0 auto 15px auto; border-radius: 2px;"></div>
+                
+                <!-- Créditos Descontraídos -->
+                <p style="color: var(--text-main); font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">
+                    Feito com 💡 e ☕ por <span style="color: var(--primary);">Kayrom Samuel</span>
+                </p>
+                
+                <!-- Link do Instagram -->
+                <a href="https://instagram.com/https_kayrom" target="_blank" rel="noopener noreferrer" 
+                   style="color: var(--text-light); text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: transform 0.2s ease, color 0.2s;">
+                    <i class="fab fa-instagram" style="font-size: 1.1rem; color: #E1306C;"></i> @https_kayrom
+                </a>
+            </div>
+            
+        </section> <!-- Fim da secção profile -->
     </main>
 
     <!-- Menu Mobile Inferior -->
@@ -480,7 +568,7 @@
                     class="fas fa-chart-pie"></i><span>Início</span></button>
             <button class="bottom-nav-btn" data-tab="history" onclick="window.switchTab('history')"><i
                     class="fas fa-list"></i><span>Histórico</span></button>
-        
+
         </div>
         <button class="bottom-nav-add" onclick="window.openModal()"><i class="fas fa-plus"></i></button>
         <div class="nav-group-right">
@@ -500,24 +588,31 @@
                 <button class="close-btn" onclick="window.closeModal()"><i class="fas fa-times"></i></button>
             </div>
             <form id="transactionForm" novalidate>
-               <!-- TIPO DE TRANSAÇÃO (Mantém o original) -->
+                <!-- TIPO DE TRANSAÇÃO (Mantém o original) -->
                 <div class="form-group">
                     <label>Tipo de Transação</label>
                     <div class="type-selector">
                         <input type="radio" name="type" value="income" id="typeIncome" checked>
-                        <label for="typeIncome" class="btn-type btn-income"><i class="fas fa-arrow-down"></i> Entrada</label>
+                        <label for="typeIncome" class="btn-type btn-income"><i class="fas fa-arrow-down"></i>
+                            Entrada</label>
                         <input type="radio" name="type" value="expense" id="typeExpense">
-                        <label for="typeExpense" class="btn-type btn-expense"><i class="fas fa-arrow-up"></i> Saída</label>
+                        <label for="typeExpense" class="btn-type btn-expense"><i class="fas fa-arrow-up"></i>
+                            Saída</label>
                         <input type="radio" name="type" value="transfer" id="typeTransfer">
-                        <label for="typeTransfer" class="btn-type btn-transfer"><i class="fas fa-exchange-alt"></i> Transferência</label>
+                        <label for="typeTransfer" class="btn-type btn-transfer"><i class="fas fa-exchange-alt"></i>
+                            Transferência</label>
                     </div>
                 </div>
 
                 <!-- BLOCO CORRIGIDO: Descrição, Moeda, Valor, Data e Tags -->
                 <div class="form-group">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <label style="margin: 0;">Descrição</label>
-                        <button type="button" class="btn-icon text-primary" onclick="window.scanReceiptQR()" title="Ler Nota Fiscal (QR Code)" style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.1); padding: 4px 10px; border-radius: 8px;"><i class="fas fa-qrcode"></i> Ler Nota (App)</button>
+                        <button type="button" class="btn-icon text-primary" onclick="window.scanReceiptQR()"
+                            title="Ler Nota Fiscal (QR Code)"
+                            style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.1); padding: 4px 10px; border-radius: 8px;"><i
+                                class="fas fa-qrcode"></i> Ler Nota (App)</button>
                     </div>
                     <input type="text" id="descInput" required placeholder="Ex: Conta de Luz">
                 </div>
@@ -553,8 +648,8 @@
                 </div>
                 <!-- O RESTANTE DO FORMULÁRIO CONTINUA IGUAL... -->
                 <div class="form-row">
-                    <div class="form-group" style="flex: 1;" id="categoryGroup"><label>Categoria</label><select id="categoryInput"
-                            required></select></div>
+                    <div class="form-group" style="flex: 1;" id="categoryGroup"><label>Categoria</label><select
+                            id="categoryInput" required></select></div>
                     <div class="form-group" style="flex: 1;"><label>Conta/Carteira</label>
                         <select id="accountInput" required>
                             <option value="Nubank">Nubank</option>
@@ -572,8 +667,10 @@
                     </div>
                 </div>
 
-                <div class="form-group" id="transferSection" style="display: none; background: var(--background); padding: 12px; border-radius: 12px; border: 1px solid var(--surface-border);">
-                    <label style="color: var(--primary); font-weight: 700;"><i class="fas fa-exchange-alt"></i> Transferência entre contas</label>
+                <div class="form-group" id="transferSection"
+                    style="display: none; background: var(--background); padding: 12px; border-radius: 12px; border: 1px solid var(--surface-border);">
+                    <label style="color: var(--primary); font-weight: 700;"><i class="fas fa-exchange-alt"></i>
+                        Transferência entre contas</label>
                     <div class="form-row" style="margin-top: 8px;">
                         <div class="form-group" style="flex: 1; margin-bottom: 0;">
                             <label>Origem</label>
@@ -724,14 +821,19 @@
                 <button class="close-btn" onclick="window.closeDebtModal()"><i class="fas fa-times"></i></button>
             </div>
             <form id="debtForm" onsubmit="event.preventDefault(); window.saveDebt();" novalidate>
-                <div class="form-group"><label>Nome da dívida</label><input type="text" id="debtTitleInput" required placeholder="Ex: Financiamento carro"></div>
+                <div class="form-group"><label>Nome da dívida</label><input type="text" id="debtTitleInput" required
+                        placeholder="Ex: Financiamento carro"></div>
                 <div class="form-row">
-                    <div class="form-group" style="flex: 1;"><label>Valor total (R$)</label><input type="number" id="debtTotalInput" step="0.01" required placeholder="0.00"></div>
-                    <div class="form-group" style="flex: 1;"><label>Valor já pago</label><input type="number" id="debtPaidInput" step="0.01" value="0" placeholder="0.00"></div>
+                    <div class="form-group" style="flex: 1;"><label>Valor total (R$)</label><input type="number"
+                            id="debtTotalInput" step="0.01" required placeholder="0.00"></div>
+                    <div class="form-group" style="flex: 1;"><label>Valor já pago</label><input type="number"
+                            id="debtPaidInput" step="0.01" value="0" placeholder="0.00"></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group" style="flex: 1;"><label>Taxa de juros (%)</label><input type="number" id="debtInterestInput" step="0.01" value="0" placeholder="0.00"></div>
-                    <div class="form-group" style="flex: 1;"><label>Vencimento</label><input type="date" id="debtDueDateInput"></div>
+                    <div class="form-group" style="flex: 1;"><label>Taxa de juros (%)</label><input type="number"
+                            id="debtInterestInput" step="0.01" value="0" placeholder="0.00"></div>
+                    <div class="form-group" style="flex: 1;"><label>Vencimento</label><input type="date"
+                            id="debtDueDateInput"></div>
                 </div>
                 <button type="submit" class="btn-submit" style="margin-top: 15px;">Salvar Dívida</button>
             </form>
@@ -746,14 +848,16 @@
                 <button class="close-btn" onclick="window.closeDebtPaymentModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="form-group">
-                <p id="debtPaymentDescription" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;"></p>
+                <p id="debtPaymentDescription"
+                    style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;"></p>
                 <label>Valor do pagamento (R$)</label>
                 <input type="number" id="debtPaymentAmountInput" min="0.01" step="0.01" required placeholder="0,00">
                 <small style="color: var(--text-light); font-size: 0.75rem; display: block; margin-top: 8px;">
                     O valor será somado ao total já pago e não poderá ultrapassar o saldo restante.
                 </small>
             </div>
-            <button class="btn-submit" onclick="window.saveDebtPayment()" style="margin-top: 15px;">Registrar Pagamento</button>
+            <button class="btn-submit" onclick="window.saveDebtPayment()" style="margin-top: 15px;">Registrar
+                Pagamento</button>
         </div>
     </div>
 
@@ -762,10 +866,12 @@
         <div class="modal-content" style="max-width: 420px;">
             <div class="modal-header">
                 <h2>Nova Regra de Recorrência</h2>
-                <button class="close-btn" onclick="window.closeRecurringRuleModal()"><i class="fas fa-times"></i></button>
+                <button class="close-btn" onclick="window.closeRecurringRuleModal()"><i
+                        class="fas fa-times"></i></button>
             </div>
             <form id="recurringRuleForm" onsubmit="event.preventDefault(); window.saveRecurringRule();" novalidate>
-                <div class="form-group"><label>Nome</label><input type="text" id="ruleTitleInput" required placeholder="Ex: Salário, Luz, Internet"></div>
+                <div class="form-group"><label>Nome</label><input type="text" id="ruleTitleInput" required
+                        placeholder="Ex: Salário, Luz, Internet"></div>
                 <div class="form-row">
                     <div class="form-group" style="flex: 1;">
                         <label>Tipo</label>
@@ -925,27 +1031,52 @@
                     class="btn-danger" id="genericConfirmBtn" style="flex:1;">Confirmar</button></div>
         </div>
     </div>
-
+<!-- Modal de Exclusão de Conta (Zona de Perigo) -->
+    <div class="modal-overlay" id="deleteAccountModal">
+        <div class="modal-content modal-alert" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 2.5rem; color: var(--danger); margin-bottom: 10px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 style="margin-bottom: 10px; color: var(--text-main);">Zona de Perigo</h2>
+            <p style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 20px;">
+                Esta ação é <strong>irreversível</strong>. Todos os seus registos financeiros, orçamentos, metas e o seu perfil serão apagados permanentemente dos nossos servidores.
+            </p>
+            <div class="form-group" style="text-align: left;">
+                <label style="color: var(--danger); font-weight: 700;">Escreva "EXCLUIR" para confirmar</label>
+                <input type="text" id="deleteAccountConfirmInput" placeholder="EXCLUIR" autocomplete="off" style="border-color: var(--danger); text-transform: uppercase;">
+            </div>
+            <div class="modal-actions" style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-secondary" onclick="window.closeDeleteAccountModal()" style="flex: 1;">Cancelar</button>
+                <button class="btn-danger" id="btnConfirmDeleteAccount" onclick="window.processAccountDeletion()" style="flex: 1;">Apagar Tudo</button>
+            </div>
+        </div>
+    </div>
     <div id="toast-container"></div>
     <!-- Modal Novo Cartão de Crédito -->
     <div class="modal-overlay" id="creditCardModal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
                 <h2>Novo Cartão</h2>
-                <button class="close-btn" onclick="document.getElementById('creditCardModal').classList.remove('active')"><i class="fas fa-times"></i></button>
+                <button class="close-btn"
+                    onclick="document.getElementById('creditCardModal').classList.remove('active')"><i
+                        class="fas fa-times"></i></button>
             </div>
             <form onsubmit="event.preventDefault(); window.saveCreditCard();" id="creditCardForm" novalidate>
-                <div class="form-group"><label>Nome do Cartão</label><input type="text" id="ccNameInput" required placeholder="Ex: Nubank Platinum"></div>
-                <div class="form-group"><label>Limite Total (R$)</label><input type="number" id="ccLimitInput" step="0.01" required placeholder="0.00"></div>
+                <div class="form-group"><label>Nome do Cartão</label><input type="text" id="ccNameInput" required
+                        placeholder="Ex: Nubank Platinum"></div>
+                <div class="form-group"><label>Limite Total (R$)</label><input type="number" id="ccLimitInput"
+                        step="0.01" required placeholder="0.00"></div>
                 <div class="form-row">
-                    <div class="form-group" style="flex:1;"><label>Dia Fechamento</label><input type="number" id="ccCloseDay" min="1" max="31" required></div>
-                    <div class="form-group" style="flex:1;"><label>Dia Vencimento</label><input type="number" id="ccDueDay" min="1" max="31" required></div>
+                    <div class="form-group" style="flex:1;"><label>Dia Fechamento</label><input type="number"
+                            id="ccCloseDay" min="1" max="31" required></div>
+                    <div class="form-group" style="flex:1;"><label>Dia Vencimento</label><input type="number"
+                            id="ccDueDay" min="1" max="31" required></div>
                 </div>
                 <button type="submit" class="btn-submit" style="margin-top: 15px;">Adicionar Cartão</button>
             </form>
         </div>
     </div>
-<!-- Modal de Dividendos -->
+    <!-- Modal de Dividendos -->
     <div class="modal-overlay" id="dividendModal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
@@ -954,15 +1085,55 @@
             </div>
             <form onsubmit="event.preventDefault(); window.saveDividend();" id="dividendForm">
                 <div class="form-group"><label>Ativo Pagador</label><select id="divAssetInput" required></select></div>
-                <div class="form-group"><label>Valor Recebido (R$)</label><input type="number" id="divValueInput" step="0.01" required placeholder="0.00"></div>
-                <div class="form-group"><label>Conta de Destino</label><input type="text" id="divAccountInput" value="Nubank" required></div>
+                <div class="form-group"><label>Valor Recebido (R$)</label><input type="number" id="divValueInput"
+                        step="0.01" required placeholder="0.00"></div>
+                <div class="form-group"><label>Conta de Destino</label><input type="text" id="divAccountInput"
+                        value="Nubank" required></div>
                 <button type="submit" class="btn-submit" style="margin-top: 15px;">Salvar Rendimento</button>
             </form>
         </div>
     </div>
+    <!-- Botão Flutuante do Assistente IA -->
+    <button onclick="window.openAIAssistantModal()" style="position: fixed; bottom: 85px; right: 20px; width: 56px; height: 56px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); cursor: pointer; z-index: 999; transition: transform 0.2s;" title="Assistente Financeiro IA">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- Modal do Assistente IA -->
+    <div class="modal-overlay" id="aiAssistantModal">
+        <div class="modal-content" style="max-width: 450px; height: 550px; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; padding: 15px 20px; border-bottom: 1px solid var(--border-color);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 35px; height: 35px; background: rgba(59, 130, 246, 0.2); color: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1rem; margin: 0; color: white;">Kaizen IA</h2>
+                        <span style="font-size: 0.75rem; color: #10b981;">● Online e pronto para ajudar</span>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="window.closeAIAssistantModal()" style="color: white;"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <!-- Corpo do Chat -->
+            <div id="aiChatMessages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: var(--background);">
+                <div style="background: var(--surface); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--surface-border); max-width: 85%; align-self: flex-start; font-size: 0.9rem; color: var(--text-main);">
+                    Olá! Sou o teu consultor financeiro inteligente. Podes perguntar-me sobre os teus gastos, pedir dicas para poupar ou saber como está o teu saldo. O que gostarias de saber hoje?
+                </div>
+            </div>
+
+            <!-- Caixa de Texto e Envio -->
+            <div style="padding: 12px 15px; background: var(--surface); border-top: 1px solid var(--surface-border); display: flex; gap: 10px;">
+                <input type="text" id="aiChatInput" placeholder="Ex: Quanto gastei em comida este mês?" onkeypress="if(event.key === 'Enter') window.sendAIMessage()" style="flex: 1; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-input); color: var(--text-main); font-size: 0.9rem; outline: none;">
+                <button onclick="window.sendAIMessage()" style="background: var(--primary); color: white; border: none; width: 42px; height: 42px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- Script Modular Principa
      l -->
-    <script type="module" src="/js/script.js?v=20260910-1647"></script>
+    <script type="module" src="/js/script.js?v=v4"></script>
+    
 </body>
 
 </html>

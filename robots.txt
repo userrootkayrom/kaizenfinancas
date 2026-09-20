@@ -1,0 +1,20 @@
+User-agent: *
+
+Disallow: /index.html
+Disallow: /index_3.html
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /history
+Disallow: /investments
+Disallow: /annual
+
+Allow: /login.html
+Allow: /manifest.json
+Allow: /css/
+Allow: /js/
+Allow: /icons/
+Allow: /acet/
+
+
+Disallow: /*.json$
+Disallow: /*.md$

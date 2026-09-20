@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Termos de Uso - Kaizen Finanças</title>
+    <meta name="theme-color" content="#3b82f6">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-strong: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --background: #edf3f8;
+            --surface: rgba(255, 255, 255, 0.92);
+            --surface-border: rgba(148, 163, 184, 0.28);
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --card-shadow: 0 18px 40px -18px rgba(15, 23, 42, 0.25);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #07111d;
+                --surface: rgba(15, 23, 42, 0.94);
+                --surface-border: rgba(148, 163, 184, 0.18);
+                --text-main: #f8fafc;
+                --text-light: #94a3b8;
+                --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.15), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.12), transparent 26%),
+                var(--background);
+            color: var(--text-main);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--surface);
+            backdrop-filter: blur(18px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--surface-border);
+        }
+
+        .header-section {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+            color: var(--primary);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.2rem auto;
+            border: 1px solid var(--surface-border);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .last-updated {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin: 2.5rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        p,
+        li {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        strong {
+            color: var(--text-main);
+        }
+
+        ul {
+            margin-bottom: 1.5rem;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 0.8rem;
+        }
+
+        ul li::before {
+            content: "\f054";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.65rem;
+            color: var(--primary);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            background: var(--background);
+            border: 1px solid var(--surface-border);
+            padding: 10px 18px;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(59, 130, 246, 0.08);
+            color: var(--primary);
+            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateX(-4px);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(239, 68, 68, 0.05));
+            border-left: 4px solid var(--warning);
+            padding: 1.2rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar ao App</a>
+
+        <div class="header-section">
+            <div class="header-icon"><i class="fas fa-file-contract"></i></div>
+            <h1>Termos de <span>Uso</span></h1>
+            <div class="last-updated">Última atualização: Setembro de 2026</div>
+        </div>
+
+        <p>Bem-vindo(a)! Ao acessar e utilizar o aplicativo <strong>Kaizen Finanças</strong>, você concorda
+            expressamente com os presentes Termos de Uso. Caso não concorde com qualquer parte destes termos, por favor,
+            não utilize a nossa plataforma.</p>
+
+        <h2><i class="fas fa-balance-scale"></i> 1. Natureza do Serviço</h2>
+        <div class="highlight-box">
+            <p><i class="fas fa-exclamation-triangle" style="color: var(--warning); margin-right: 8px;"></i> O Kaizen
+                Finanças é uma ferramenta de tecnologia desenvolvida exclusivamente para auxiliar na organização
+                financeira pessoal. <strong>O aplicativo não oferece aconselhamento financeiro, recomendações de
+                    investimentos ou serviços de contabilidade.</strong></p>
+        </div>
+        <p>Todas as decisões financeiras tomadas com base nos dados organizados no aplicativo são de sua inteira
+            responsabilidade.</p>
+
+        <h2><i class="fas fa-user-check"></i> 2. Responsabilidades do Usuário</h2>
+        <ul>
+            <li><strong>Segurança da Conta:</strong> Você é responsável por manter a confidencialidade de sua senha e
+                dos dados de acesso. O Kaizen Finanças não se responsabiliza por perdas causadas por acesso não
+                autorizado decorrente de negligência no cuidado com as suas credenciais.</li>
+            <li><strong>Veracidade dos Dados:</strong> O aplicativo depende das informações (receitas, despesas, saldos)
+                inseridas manualmente por você. Não nos responsabilizamos por cálculos imprecisos resultantes de dados
+                inseridos incorretamente ou desatualizados.</li>
+        </ul>
+
+        <h2><i class="fas fa-chart-line"></i> 3. Integrações de Terceiros e Cotações</h2>
+        <p>A funcionalidade de acompanhamento de investimentos utiliza APIs de terceiros (como a API Brapi) para buscar
+            cotações da bolsa de valores (B3) em tempo real ou com atraso natural de mercado. O Kaizen Finanças não
+            garante a precisão absoluta, disponibilidade contínua ou exatidão temporal dessas cotações. Tais informações
+            são fornecidas "no estado em que se encontram", apenas para fins de referência de patrimônio.</p>
+
+        <h2><i class="fas fa-shield-alt"></i> 4. Limitação de Responsabilidade</h2>
+        <p>Em nenhuma hipótese o Kaizen Finanças, seus desenvolvedores ou parceiros associados serão responsabilizados
+            por quaisquer danos diretos, indiretos, incidentais ou consequentes resultantes de:</p>
+        <ul>
+            <li>Uso indevido ou incapacidade técnica de uso do aplicativo;</li>
+            <li>Atrasos ou falhas no recebimento de notificações push de vencimento de contas;</li>
+            <li>Perdas financeiras de qualquer natureza, perda de dados por mau uso ou lucros cessantes.</li>
+        </ul>
+
+        <h2><i class="fas fa-copyright"></i> 5. Propriedade Intelectual</h2>
+        <p>Todo o código-fonte, design de interface, logotipos e textos associados ao Kaizen Finanças são propriedades
+            exclusivas de seus desenvolvedores. É terminantemente proibida a reprodução, engenharia reversa, cópia ou
+            distribuição não autorizada do aplicativo ou de partes dele.</p>
+
+        <h2><i class="fas fa-sync-alt"></i> 6. Modificações nos Termos</h2>
+        <p>Reservamo-nos o direito de modificar estes termos a qualquer momento para refletir atualizações no sistema ou
+            na lei. O uso contínuo da plataforma após a alteração constitui aceitação tácita dos novos Termos de Uso.
+        </p>
+    </div>
+        
+</body>
+
+</html>

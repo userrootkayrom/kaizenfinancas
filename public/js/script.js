@@ -1,6 +1,7 @@
 import { db, auth } from './firebase-init.js';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, where, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, where, getDoc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 
 const transactionsCol = collection(db, 'transacoes');
 
@@ -335,20 +336,19 @@ document.getElementById('typeExpense')?.addEventListener('change', () => updateC
 function loadUserData() {
     const q = query(transactionsCol, where("userId", "==", currentUser.uid));
     unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
-        transactions = []; budgets = []; goals = []; debts = []; investments = [];
+        transactions = []; budgets = []; goals = []; debts = []; investments = []; creditCards = [];
         snapshot.forEach((docSnap) => {
             const data = docSnap.data();
             const item = { id: docSnap.id, ...data };
             if (data.type === 'budget') budgets.push(item);
             else if (data.type === 'goal') goals.push(item);
-                else if (data.type === 'debt') debts.push(item);
-                else if (data.type === 'investment') investments.push(item);
-                else if (data.type === 'creditCard') creditCards.push(item);
-                else transactions.push(item);
-            });
-       transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            else if (data.type === 'debt') debts.push(item);
+            else if (data.type === 'investment') investments.push(item);
+            else if (data.type === 'creditCard') creditCards.push(item);
+            else transactions.push(item);
+        });
+        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        // Remove Skeletons no primeiro load
         if (isFirstLoad) {
             document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
             isFirstLoad = false;
@@ -358,11 +358,8 @@ function loadUserData() {
         if (typeof renderGoals === 'function') renderGoals();
         if (typeof renderDebts === 'function') renderDebts();
         if (typeof renderInvestments === 'function') renderInvestments();
-        
-        // --- ADICIONE ESTAS TRÊS LINHAS AQUI ---
         if (typeof renderCreditCards === 'function') renderCreditCards();
         if (typeof checkGamificationAndInsights === 'function') checkGamificationAndInsights();
-        // --------------------------------------
 
         if (document.getElementById('annual') && document.getElementById('annual').classList.contains('active')) {
             window.renderAnnualReport();
@@ -375,6 +372,7 @@ function loadUserData() {
         window.showToast("Não foi possível carregar seus dados. Verifique sua conexão.", "error");
     });
 }
+
 // ================= TEMA & PRIVACIDADE =================
 function applyTheme(isDark) {
     const iconDesktop = document.getElementById('themeIconDesktop');
@@ -412,6 +410,7 @@ window.togglePrivacyMode = function () {
     if (typeof renderGoals === 'function') renderGoals();
     if (typeof renderDebts === 'function') renderDebts();
     if (typeof renderInvestments === 'function') renderInvestments();
+    if (typeof renderCreditCards === 'function') renderCreditCards();
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -489,7 +488,6 @@ function renderBudgets() {
     });
 }
 
-// METAS COM PRAZOS DEFINIDOS
 function renderGoals() {
     const container = document.getElementById('goalsList');
     if (!container) return;
@@ -1004,7 +1002,7 @@ document.getElementById('transactionForm')?.addEventListener('submit', async fun
     const desc = document.getElementById('descInput').value;
     const baseValue = parseFloat(document.getElementById('valueInput').value);
     const currency = parseFloat(document.getElementById('currencyInput')?.value || 1);
-    const value = baseValue * currency; // Converte automaticamente se for Dólar/Euro
+    const value = baseValue * currency;
     const tagsRaw = document.getElementById('tagsInput')?.value || '';
     const tags = tagsRaw.split(',').map(tag => tag.trim().toLowerCase()).filter(t => t);
     const category = document.getElementById('categoryInput').value;
@@ -1087,7 +1085,8 @@ document.getElementById('transactionForm')?.addEventListener('submit', async fun
                         category,
                         date: formattedDate,
                         dueDate: formattedDueDate,
-                        account
+                        account,
+                        tags
                     });
                 }
             }
@@ -1841,6 +1840,7 @@ function checkAlerts() {
         alertsContainer.innerHTML = '<div class="alert-item text-center" style="padding:10px; color:var(--text-light)">Nenhum alerta pendente.</div>';
     }
 }
+
 // ================= GAMIFICAÇÃO & INSIGHTS =================
 function checkGamificationAndInsights() {
     const insightsList = document.getElementById('aiInsightsList');
@@ -1887,6 +1887,7 @@ function checkGamificationAndInsights() {
     if(totalIncome > totalExpense && totalExpense > 0) addBadge('fas fa-shield-alt', 'No Azul', 'Gastou menos do que ganhou', '#3b82f6');
     if(investments && investments.length > 0) addBadge('fas fa-chart-line', 'Investidor', 'Possui ativos cadastrados', '#f59e0b');
 }
+
 // ================= CARTÕES DE CRÉDITO =================
 window.openCreditCardModal = () => document.getElementById('creditCardModal').classList.add('active');
 
@@ -1907,7 +1908,6 @@ window.saveCreditCard = async function() {
             date: new Date().toISOString().split('T')[0]
         });
         
-        // Adiciona automaticamente esse cartão como uma opção de "Conta" no formulário principal
         const accountSelect = document.getElementById('accountInput');
         if (accountSelect && ![...accountSelect.options].some(opt => opt.value === name)) {
             accountSelect.innerHTML += `<option value="${name}">${name} (Cartão)</option>`;
@@ -1932,7 +1932,6 @@ function renderCreditCards() {
     }
 
     creditCards.forEach(card => {
-        // A fatura é calculada buscando despesas pendentes que foram lançadas na conta com o nome deste cartão
         const cardExpenses = transactions.filter(t => t.account === card.name && (t.type === 'expense' || t.type === 'saida') && t.status === 'pendente');
         const invoiceTotal = cardExpenses.reduce((acc, curr) => acc + parseFloat(curr.value || curr.amount || 0), 0);
         const limitAvailable = card.limit - invoiceTotal;
@@ -1955,60 +1954,82 @@ function renderCreditCards() {
         `;
     });
 }
+
 // ================= LEITURA DE QR CODE (CAPACITOR) =================
 window.scanReceiptQR = async function() {
     const scanner = window.Capacitor?.Plugins?.BarcodeScanner;
     if(scanner) {
         try {
             await scanner.checkPermission({ force: true });
-            document.body.style.background = 'transparent'; // Fundo transparente para a câmera
+            
+            const modal = document.getElementById('modal');
+            if (modal) modal.style.opacity = '0';
+            document.body.style.background = 'transparent';
+            document.documentElement.style.background = 'transparent';
+
             const result = await scanner.startScan();
+            
+            if (modal) modal.style.opacity = '1';
+            document.body.style.background = '';
+            document.documentElement.style.background = '';
+
             if(result.hasContent) {
                 window.showToast("QR Code da Nota lido com sucesso!");
                 document.getElementById('descInput').value = "Nota Fiscal Escaneada";
-                // Aqui você pode adicionar um Regex para ler a URL da SEFAZ e extrair o valor!
             }
         } catch(e) { 
-            window.showToast("Câmera indisponível neste dispositivo.", "error"); 
+            const modal = document.getElementById('modal');
+            if (modal) modal.style.opacity = '1';
+            document.body.style.background = '';
+            document.documentElement.style.background = '';
+            
+            window.showToast("Câmera indisponível ou leitura cancelada.", "error"); 
         }
     } else {
         window.showToast("O leitor de QR Code funciona apenas no App Android.", "error");
     }
 };
-// ================= INVESTIMENTOS AVANÇADOS (COTAÇÕES E DIVIDENDOS) =================
+
+// ================= INVESTIMENTOS AVANÇADOS (COTAÇÕES REAIS E DIVIDENDOS) =================
 window.updateStockQuotes = async function() {
     window.showToast("Buscando cotações no mercado...");
     try {
         let updatedCount = 0;
+        const token = 'CBRAPI_TOKEN=mVf8q6adWy9RSbSJbyVHLx'; 
+
         for (let inv of investments) {
             if (inv.class === 'Ações' || inv.class === 'Fundos Imobiliários' || inv.class === 'FIIs') {
-                // Aqui você pode conectar a API HG Brasil ou Brapi.dev usando fetch().
-                // Para demonstração, faremos uma variação simulada de +-2%:
-                const randomVariation = 1 + (Math.random() * 0.04 - 0.02); 
-                const newPrice = parseFloat(inv.price) * randomVariation;
-                
-                await updateDoc(doc(db, 'transacoes', inv.id), { 
-                    currentVal: newPrice * parseFloat(inv.qty) 
-                });
-                updatedCount++;
+                const ticker = inv.name.trim().toUpperCase();
+                try {
+                    const response = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${token}`);
+                    const data = await response.json();
+                    if (data.results && data.results.length > 0) {
+                        const newPrice = data.results[0].regularMarketPrice;
+                        if (newPrice) {
+                            await updateDoc(doc(db, 'transacoes', inv.id), { 
+                                currentVal: newPrice * parseFloat(inv.qty) 
+                            });
+                            updatedCount++;
+                        }
+                    }
+                } catch (apiError) { console.error(`Falha ao consultar ${ticker}:`, apiError); }
             }
         }
-        window.showToast(`${updatedCount} ativos sincronizados com sucesso!`);
-    } catch(e) {
-        window.showToast("Erro na sincronização de preços.", "error");
-    }
+        
+        if (updatedCount > 0) window.showToast(`${updatedCount} ativos sincronizados com a B3!`);
+        else window.showToast("Nenhum ativo atualizado. Verifique se usou os códigos corretos (ex: PETR4).", "error");
+    } catch(e) { console.error(e); window.showToast("Erro na sincronização de preços.", "error"); }
 };
 
 window.openDividendModal = function() {
     const select = document.getElementById('divAssetInput');
     if(select) {
         select.innerHTML = '<option value="">Selecione o ativo...</option>';
-        investments.forEach(inv => {
-            select.innerHTML += `<option value="${inv.name}">${inv.name}</option>`;
-        });
+        investments.forEach(inv => select.innerHTML += `<option value="${inv.name}">${inv.name}</option>`);
     }
     document.getElementById('dividendModal').classList.add('active');
 };
+
 window.closeDividendModal = () => document.getElementById('dividendModal').classList.remove('active');
 
 window.saveDividend = async function() {
@@ -2017,23 +2038,203 @@ window.saveDividend = async function() {
     const account = document.getElementById('divAccountInput').value;
 
     if(!asset || isNaN(value)) return;
-
     try {
-        // Lança o dividendo como uma nova Transação de "Entrada" na conta selecionada
         await addDoc(transactionsCol, {
-            userId: currentUser.uid,
-            type: 'income',
-            desc: `Dividendos/Rendimentos - ${asset}`,
-            value: value,
-            category: 'Rendimentos',
-            account: account,
-            date: new Date().toISOString().split('T')[0],
-            status: 'pago'
+            userId: currentUser.uid, type: 'income', desc: `Dividendos/Rendimentos - ${asset}`, value: value,
+            category: 'Rendimentos', account: account, date: new Date().toISOString().split('T')[0], status: 'pago'
         });
         window.showToast("Dividendo recebido e lançado na conta!");
         window.closeDividendModal();
         document.getElementById('dividendForm').reset();
-    } catch (e) {
-        window.showToast("Erro ao lançar dividendo.", "error");
+    } catch (e) { window.showToast("Erro ao lançar dividendo.", "error"); }
+};
+window.openDeleteAccountModal = function() {
+    const input = document.getElementById('deleteAccountConfirmInput');
+    if(input) input.value = '';
+    document.getElementById('deleteAccountModal').classList.add('active');
+};
+
+window.closeDeleteAccountModal = function() {
+    document.getElementById('deleteAccountModal').classList.remove('active');
+};
+window.processAccountDeletion = async function() {
+    // Agora converte tudo para maiúsculas automaticamente
+    const confirmText = document.getElementById('deleteAccountConfirmInput').value.trim().toUpperCase(); 
+    
+    if (confirmText !== 'EXCLUIR') {
+        window.showToast('Escreva "EXCLUIR" para confirmar.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('btnConfirmDeleteAccount');
+    btn.innerText = 'A apagar...';
+    btn.disabled = true;
+
+    try {
+        const q = query(transactionsCol, where("userId", "==", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        
+        const deletePromises = [];
+        querySnapshot.forEach((docSnap) => {
+            deletePromises.push(deleteDoc(doc(db, 'transacoes', docSnap.id)));
+        });
+        await Promise.all(deletePromises); 
+
+        await deleteDoc(doc(db, 'usuarios', currentUser.uid));
+        await deleteUser(currentUser);
+
+        window.showToast('Conta e dados excluídos com sucesso.', 'success');
+    } catch (error) {
+        console.error("Erro na exclusão:", error);
+        if (error.code === 'auth/requires-recent-login') {
+            window.showToast('Por segurança, faça logout e inicie sessão novamente antes de excluir a conta.', 'error');
+        } else {
+            window.showToast('Erro ao excluir conta. Tente novamente.', 'error');
+        }
+        btn.innerText = 'Apagar Tudo';
+        btn.disabled = false;
+    }
+};
+// ================= ASSISTENTE FINANCEIRO COM GROQ (LLAMA 3) =================
+const GROQ_API_KEY = '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'; // Insira aqui a sua chave do Groq Console
+
+window.openAIAssistantModal = function() {
+    document.getElementById('aiAssistantModal').classList.add('active');
+    const chatMessages = document.getElementById('aiChatMessages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+};
+
+window.closeAIAssistantModal = function() {
+    document.getElementById('aiAssistantModal').classList.remove('active');
+};
+
+window.sendAIMessage = async function() {
+    const input = document.getElementById('aiChatInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (GROQ_API_KEY === 'SUA_CHAVE_DA_GROQ_AQUI') {
+        window.showToast('Configure a sua chave da API da Groq no script.js', 'error');
+        return;
+    }
+
+    const chatMessages = document.getElementById('aiChatMessages');
+    
+    chatMessages.innerHTML += `
+        <div style="background: var(--primary); color: white; padding: 12px 16px; border-radius: 12px; max-width: 85%; align-self: flex-end; font-size: 0.9rem; word-break: break-word;">
+            ${text}
+        </div>
+    `;
+    input.value = '';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    const typingId = 'typing-' + Date.now();
+    chatMessages.innerHTML += `
+        <div id="${typingId}" style="background: var(--surface); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--surface-border); max-width: 60px; align-self: flex-start; font-size: 0.9rem; color: var(--text-light);">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </div>
+    `;
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        let totalIncome = 0;
+        let totalExpense = 0;
+        let categorySummary = {};
+
+        transactions.forEach(t => {
+            const val = parseFloat(t.value || t.amount || 0);
+            if (t.status === 'pago' || !t.status) {
+                if (t.type === 'income' || t.type === 'entrada') totalIncome += val;
+                if (t.type === 'expense' || t.type === 'saida') {
+                    totalExpense += val;
+                    categorySummary[t.category] = (categorySummary[t.category] || 0) + val;
+                }
+            }
+        });
+
+        const nameInput = document.getElementById('usernameInput');
+        const userName = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : "Utilizador";
+
+        const financialContext = `
+            Contexto financeiro atual:
+            - Nome do utilizador: ${userName}
+            - Receitas totais: R$ ${totalIncome.toFixed(2)}
+            - Despesas totais: R$ ${totalExpense.toFixed(2)}
+            - Saldo atual: R$ ${(totalIncome - totalExpense).toFixed(2)}
+            - Gastos por categoria: ${JSON.stringify(categorySummary)}
+        `;
+
+        const systemPrompt = `
+            És o Kaizen IA, um assistente financeiro pessoal inteligente e amigável. O utilizador chama-se ${userName}.
+            Podes responder normalmente às dúvidas financeiras ou, se o utilizador quiser registar uma despesa ou entrada (ex: "gastei 50 em mercado" ou "recebi 1000 de salário"), deves extrair os dados e responder estritamente num formato JSON especial no início da tua resposta, seguido de uma mensagem amigável:
+            
+            Formato JSON para transação (se aplicável):
+            {"action": "add_transaction", "type": "expense" ou "income", "desc": "descrição", "value": valor_numerico, "category": "categoria"}
+            
+            Se não for pedido para criar transação, responde apenas em texto normal em português.
+        `;
+
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${GROQ_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "openai/gpt-oss-20b",
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: `${financialContext}\n\nMensagem: ${text}` }
+                ],
+                temperature: 0.5,
+                max_tokens: 500
+            })
+        });
+
+        const data = await response.json();
+        document.getElementById(typingId)?.remove();
+
+        let aiReply = "Desculpa, ocorreu um erro ao processar a tua resposta.";
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+            aiReply = data.choices[0].message.content;
+            
+            // Tenta detetar se a IA gerou um JSON de ação de transação
+            try {
+                const jsonMatch = aiReply.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    const parsedAction = JSON.parse(jsonMatch[0]);
+                    if (parsedAction.action === "add_transaction") {
+                        // Grava automaticamente no Firestore
+                        await addDoc(transactionsCol, {
+                            userId: currentUser.uid,
+                            type: parsedAction.type,
+                            status: 'pago',
+                            desc: parsedAction.desc,
+                            value: parseFloat(parsedAction.value),
+                            category: parsedAction.category || 'Outros',
+                            date: new Date().toISOString().split('T')[0],
+                            account: 'Nubank'
+                        });
+                        window.showToast("Transação criada pela IA com sucesso!");
+                        aiReply = aiReply.replace(jsonMatch[0], '').trim();
+                        aiReply = `✅ Registei isto para ti! ${aiReply}`;
+                    }
+                }
+            } catch (e) {
+                console.error("Erro ao interpretar ação da IA:", e);
+            }
+        }
+
+        chatMessages.innerHTML += `
+            <div style="background: var(--surface); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--surface-border); max-width: 85%; align-self: flex-start; font-size: 0.9rem; color: var(--text-main);">
+                ${aiReply}
+            </div>
+        `;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    } catch (error) {
+        console.error("Erro na API da Groq:", error);
+        document.getElementById(typingId)?.remove();
+        window.showToast("Erro de ligação com a IA.", "error");
     }
 };
