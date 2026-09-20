@@ -2237,4 +2237,4 @@ window.sendAIMessage = async function() {
         document.getElementById(typingId)?.remove();
         window.showToast("Erro de ligação com a IA.", "error");
     }
-}
+};
