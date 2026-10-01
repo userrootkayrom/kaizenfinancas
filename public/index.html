@@ -18,7 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css?v=v12">
     <!-- Meta Description Padrão (Para SEO do Google) -->
 <meta name="description" content="Kaizen Finanças: O seu gestor financeiro inteligente. Controle gastos, estabeleça metas, acompanhe investimentos e alcance a sua independência financeira.">
 
@@ -241,7 +241,7 @@
         <!-- SEÇÃO HISTÓRICO COM FILTROS COMBINADOS -->
         <section id="history" class="tab-content">
             <div class="cards-grid" style="margin-bottom: 20px;">
-                <div class="card" style="grid-column: 1 / -1;">
+                <div class="card history-card" style="grid-column: 1 / -1;">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                         <h3 style="margin: 0; color: var(--text-main);">Histórico Geral</h3>
@@ -304,13 +304,13 @@
         <!-- INVESTIMENTOS -->
         <section id="investments" class="tab-content">
             <div class="cards-grid">
-                <div class="card"
+                <div class="card investment-summary-card"
                     style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                     <div>
                         <h3>Patrimônio Total em Ativos</h3>
                         <h2 id="totalInvestments" style="color: var(--primary);">R$ 0,00</h2>
                     </div>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <div class="investment-actions" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                         <button class="btn-secondary" onclick="window.updateStockQuotes()"
                             style="width: auto; margin: 0; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--primary); background: transparent; color: var(--primary); cursor: pointer; font-weight: 600;"><i
                                 class="fas fa-sync"></i> Atualizar Preços</button>
@@ -326,7 +326,7 @@
                 </div>
 
                 <!-- Esta era a tabela que havia sido apagada acidentalmente -->
-                <div class="card" style="grid-column: 1 / -1;">
+                <div class="card investment-table-card" style="grid-column: 1 / -1;">
                     <div class="table-responsive">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>

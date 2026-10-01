@@ -2564,3 +2564,283 @@ body.dark-mode .mobile-header h2 {
         gap: 7px;
     }
 }
+
+@media (max-width: 768px) {
+    body.dark-mode #history .history-card {
+        padding: 14px !important;
+    }
+
+    body.dark-mode #history .history-card > div:first-child {
+        align-items: flex-start !important;
+    }
+
+    body.dark-mode #history .search-bar {
+        margin-bottom: 10px !important;
+    }
+
+    body.dark-mode #history #searchInput {
+        min-height: 44px;
+        border-color: var(--surface-border) !important;
+        background: #0a132c !important;
+        font-size: 0.88rem;
+    }
+
+    body.dark-mode #history .filters-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    body.dark-mode #history .filters-row select {
+        width: 100%;
+        min-width: 0;
+        min-height: 40px;
+        padding: 8px 24px 8px 10px;
+        border: 1px solid var(--surface-border);
+        background: #101a36;
+        color: var(--text-main);
+        font-size: 0.76rem;
+    }
+
+    body.dark-mode #history #filterCategory {
+        grid-column: 1 / -1;
+    }
+
+    body.dark-mode #history .table-responsive,
+    body.dark-mode #investments .table-responsive {
+        width: 100%;
+        min-width: 0;
+        margin-top: 0;
+        overflow: visible;
+    }
+
+    body.dark-mode #history .table-responsive table,
+    body.dark-mode #investments .table-responsive table {
+        width: 100%;
+        min-width: 0;
+        table-layout: fixed;
+        border-spacing: 0;
+    }
+
+    body.dark-mode #history .table-responsive tr,
+    body.dark-mode #investments .table-responsive tr {
+        width: 100%;
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid rgba(133, 151, 194, 0.14);
+        border-radius: 14px;
+        background: #0b1430;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+    }
+
+    body.dark-mode #history .table-responsive td,
+    body.dark-mode #investments .table-responsive td {
+        min-width: 0;
+        padding: 6px 0;
+        color: #dce4fa;
+        font-size: 0.82rem;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid rgba(133, 151, 194, 0.08);
+    }
+
+    body.dark-mode #history .table-responsive td::before,
+    body.dark-mode #investments .table-responsive td::before {
+        color: #8492b2;
+        font-size: 0.66rem;
+        font-weight: 600;
+        letter-spacing: 0.035em;
+        text-transform: uppercase;
+    }
+
+    body.dark-mode #history .table-responsive td:first-child {
+        z-index: 1;
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(2) {
+        min-height: 28px;
+        padding-left: 30px;
+        justify-content: flex-start;
+        color: #8f9dbb;
+        font-size: 0.74rem;
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(3) {
+        padding: 4px 0 10px 30px;
+        margin-bottom: 2px;
+        font-size: 0.98rem;
+        line-height: 1.35;
+        color: #f1f3ff;
+        border-bottom: 1px solid rgba(133, 151, 194, 0.12);
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(4)::before {
+        content: "Conta";
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(5)::before {
+        content: "Categoria";
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(6)::before {
+        content: "Tipo";
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(8)::before {
+        content: "Status";
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(7) {
+        justify-content: space-between;
+        margin-top: 3px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(133, 151, 194, 0.12);
+        border-bottom: 0;
+        color: #f1f3ff;
+        font-size: 1rem;
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(7)::before {
+        content: "Valor";
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(9) {
+        justify-content: flex-end;
+        padding-top: 7px;
+        border-bottom: 0;
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(9) > div {
+        gap: 8px !important;
+    }
+
+    body.dark-mode #history .table-responsive td:nth-child(9) .btn-icon,
+    body.dark-mode #investments .table-responsive td:nth-child(7) .btn-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: #111d3b;
+    }
+
+    body.dark-mode #investments .investment-summary-card {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px !important;
+        padding: 16px !important;
+    }
+
+    body.dark-mode #investments .investment-summary-card h3 {
+        margin-bottom: 5px;
+        color: #a2aecb;
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    body.dark-mode #investments #totalInvestments {
+        color: #d47aff !important;
+        font-size: clamp(1.45rem, 7vw, 1.9rem);
+        letter-spacing: -0.045em;
+    }
+
+    body.dark-mode #investments .investment-actions {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px !important;
+        width: 100%;
+    }
+
+    body.dark-mode #investments .investment-actions button {
+        width: 100% !important;
+        min-width: 0;
+        min-height: 42px;
+        padding: 8px 6px !important;
+        border-radius: 10px !important;
+        font-size: 0.72rem;
+        white-space: nowrap;
+    }
+
+    body.dark-mode #investments .investment-actions button:last-child {
+        grid-column: 1 / -1;
+    }
+
+    body.dark-mode #investments .investment-table-card {
+        padding: 10px !important;
+    }
+
+    body.dark-mode #investments .table-responsive tr {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    body.dark-mode #investments .table-responsive td:nth-child(1) {
+        padding: 2px 0 9px;
+        margin-bottom: 4px;
+        font-size: 1rem;
+        color: #f1f3ff;
+        border-bottom: 1px solid rgba(133, 151, 194, 0.12);
+    }
+
+    body.dark-mode #investments .table-responsive td:nth-child(2)::before {
+        content: "Classe";
+    }
+
+    body.dark-mode #investments .table-responsive td:nth-child(3)::before {
+        content: "Quantidade";
+    }
+
+    body.dark-mode #investments .table-responsive td:nth-child(4)::before {
+        content: "Preço médio";
+    }
+
+    body.dark-mode #investments .table-responsive td:nth-child(5)::before {
+        content: "Valor atual";
+    }
+
+    body.dark-mode #investments .table-responsive td:nth-child(6)::before {
+        content: "Lucro / prejuízo";
+    }
+
+    body.dark-mode #investments .table-responsive td:nth-child(5) {
+        color: #f2f4ff;
+        font-size: 0.92rem;
+    }
+
+    body.dark-mode #investments .table-responsive td:nth-child(7) {
+        justify-content: flex-end;
+        padding-top: 8px;
+        border-bottom: 0;
+    }
+
+    body.dark-mode #investments .table-responsive td[colspan] {
+        display: block;
+        padding: 18px 8px !important;
+        text-align: center;
+        color: #98a5c3;
+    }
+}
+
+@media (max-width: 360px) {
+    body.dark-mode #investments .investment-actions button {
+        font-size: 0.66rem;
+    }
+}
+
+@media (max-width: 768px) {
+    html,
+    body,
+    body * {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar,
+    body *::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+}
