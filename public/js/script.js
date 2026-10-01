@@ -37,6 +37,8 @@ const oneSignalAppId = '309c8689-b4b6-44ad-a708-36dbbc842cfe';
 let oneSignalInitialized = false;
 let oneSignalUserId = null;
 let oneSignalPlugin = null;
+let receiptScannerPlugin = null;
+let activeReceiptScan = null;
 
 // Categorias base e dinâmicas
 let customCategories = { income: [], expense: [] };
@@ -1494,6 +1496,11 @@ function initializeBackNavigation() {
 }
 
 function handleBackButton() {
+    if (activeReceiptScan) {
+        window.stopReceiptQRScan();
+        return;
+    }
+
     const activeModals = document.querySelectorAll('.modal-overlay.active');
     const topModal = activeModals[activeModals.length - 1];
     if (topModal) {
@@ -2119,37 +2126,183 @@ function renderCreditCards() {
 }
 
 // ================= LEITURA DE QR CODE (CAPACITOR) =================
-window.scanReceiptQR = async function() {
-    const scanner = window.Capacitor?.Plugins?.BarcodeScanner;
-    if(scanner) {
-        try {
-            await scanner.checkPermission({ force: true });
-            
-            const modal = document.getElementById('modal');
-            if (modal) modal.style.opacity = '0';
-            document.body.style.background = 'transparent';
-            document.documentElement.style.background = 'transparent';
+function parseReceiptAmount(value) {
+    if (typeof value !== 'string' || !value.trim()) return null;
 
-            const result = await scanner.startScan();
-            
-            if (modal) modal.style.opacity = '1';
-            document.body.style.background = '';
-            document.documentElement.style.background = '';
-
-            if(result.hasContent) {
-                window.showToast("QR Code da Nota lido com sucesso!");
-                document.getElementById('descInput').value = "Nota Fiscal Escaneada";
-            }
-        } catch(e) { 
-            const modal = document.getElementById('modal');
-            if (modal) modal.style.opacity = '1';
-            document.body.style.background = '';
-            document.documentElement.style.background = '';
-            
-            window.showToast("Câmera indisponível ou leitura cancelada.", "error"); 
+    const parseAmount = (rawAmount) => {
+        if (typeof rawAmount !== 'string') return null;
+        let normalized = rawAmount.trim().replace(/\s|R\$/gi, '');
+        const commaIndex = normalized.lastIndexOf(',');
+        const dotIndex = normalized.lastIndexOf('.');
+        if (commaIndex > dotIndex) {
+            normalized = normalized.replace(/\./g, '').replace(',', '.');
+        } else if (commaIndex !== -1) {
+            normalized = normalized.replace(/,/g, '');
         }
-    } else {
-        window.showToast("O leitor de QR Code funciona apenas no App Android.", "error");
+        if (!/^\d+(?:\.\d{1,2})?$/.test(normalized)) return null;
+
+        const amount = Number(normalized);
+        return Number.isFinite(amount) && amount > 0 ? amount : null;
+    };
+
+    const payload = value.trim();
+    if (payload.startsWith('000201')) {
+        const bytes = new TextEncoder().encode(payload);
+        const decoder = new TextDecoder();
+        let offset = 0;
+
+        while (offset + 4 <= bytes.length) {
+            const tag = decoder.decode(bytes.slice(offset, offset + 2));
+            const lengthText = decoder.decode(bytes.slice(offset + 2, offset + 4));
+            if (!/^\d{2}$/.test(tag) || !/^\d{2}$/.test(lengthText)) return null;
+
+            const length = Number(lengthText);
+            offset += 4;
+            if (offset + length > bytes.length) return null;
+
+            if (tag === '54') {
+                return parseAmount(decoder.decode(bytes.slice(offset, offset + length)));
+            }
+            offset += length;
+        }
+    }
+
+    const amountParameters = new Set([
+        'amount', 'invoiceamount', 'total', 'totalamount', 'totalnota',
+        'value', 'valor', 'valornota', 'valortotal', 'valorfinal',
+        'vlnota', 'vltotal', 'vnf'
+    ]);
+    try {
+        const url = new URL(payload);
+        for (const [key, rawAmount] of url.searchParams) {
+            if (amountParameters.has(key.toLowerCase().replace(/[^a-z]/g, ''))) {
+                const amount = parseAmount(rawAmount);
+                if (amount !== null) return amount;
+            }
+        }
+    } catch {
+        // QR payloads can be plain text rather than URLs.
+    }
+
+    const labeledAmount = payload.match(
+        /(?:valor(?:\s+total)?|total|amount)\s*[:=]\s*(?:R\$\s*)?([\d.,]+)/i
+    );
+    return labeledAmount ? parseAmount(labeledAmount[1]) : null;
+}
+
+function getReceiptScannerPlugin() {
+    const capacitor = window.Capacitor;
+    if (!capacitor?.isNativePlatform?.()) return null;
+    if (receiptScannerPlugin) return receiptScannerPlugin;
+
+    receiptScannerPlugin = capacitor.Plugins?.BarcodeScanner ||
+        capacitor.registerPlugin?.('BarcodeScanner') ||
+        null;
+    return receiptScannerPlugin;
+}
+
+function createReceiptScannerOverlay() {
+    const overlay = document.createElement('div');
+    overlay.id = 'qrScannerOverlay';
+    overlay.className = 'qr-scanner-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Leitor de QR Code');
+    overlay.innerHTML = `
+        <div class="qr-scanner-panel">
+            <div class="qr-scanner-reticle" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <p>Aponte a câmera para o QR Code da nota fiscal</p>
+            <button type="button" class="qr-scanner-cancel" onclick="window.stopReceiptQRScan()">
+                <i class="fas fa-times" aria-hidden="true"></i> Cancelar leitura
+            </button>
+        </div>
+    `;
+    return overlay;
+}
+
+async function finishReceiptQRScan(session) {
+    if (!session || activeReceiptScan !== session) return;
+    activeReceiptScan = null;
+
+    try {
+        await session.scanner.stopScan();
+    } catch (error) {
+        console.error('Erro ao encerrar o leitor de QR Code:', error);
+    }
+
+    if (session.listener) {
+        try {
+            await session.listener.remove();
+        } catch (error) {
+            console.error('Erro ao remover o listener do leitor de QR Code:', error);
+        }
+    }
+
+    document.body.classList.remove('barcode-scanner-active');
+    document.documentElement.classList.remove('barcode-scanner-active');
+    document.getElementById('qrScannerOverlay')?.remove();
+}
+
+window.stopReceiptQRScan = async function () {
+    await finishReceiptQRScan(activeReceiptScan);
+};
+
+window.scanReceiptQR = async function () {
+    if (activeReceiptScan) return;
+
+    const scanner = getReceiptScannerPlugin();
+    if (!scanner) {
+        window.showToast('O leitor de QR Code funciona apenas no App Android.', 'error');
+        return;
+    }
+
+    try {
+        let permission = await scanner.checkPermissions();
+        if (permission.camera !== 'granted') {
+            permission = await scanner.requestPermissions();
+        }
+        if (permission.camera !== 'granted') {
+            window.showToast('Permita o acesso à câmera para ler o QR Code.', 'error');
+            return;
+        }
+
+        const session = { scanner, listener: null, handled: false };
+        activeReceiptScan = session;
+        session.listener = await scanner.addListener('barcodesScanned', async ({ barcodes = [] }) => {
+            if (session.handled || activeReceiptScan !== session) return;
+            const qrCode = barcodes.find(barcode =>
+                barcode.format === 'QR_CODE' &&
+                typeof barcode.rawValue === 'string' &&
+                barcode.rawValue.trim()
+            );
+            if (!qrCode) return;
+
+            session.handled = true;
+            await finishReceiptQRScan(session);
+            const description = document.getElementById('descInput');
+            if (description) description.value = 'Nota Fiscal Escaneada';
+            const amount = parseReceiptAmount(qrCode.rawValue);
+            if (amount !== null) {
+                const valueInput = document.getElementById('valueInput');
+                const currencyInput = document.getElementById('currencyInput');
+                if (valueInput) valueInput.value = amount.toFixed(2);
+                if (currencyInput) currencyInput.value = '1';
+                window.showToast('QR Code lido. O valor da nota foi preenchido.');
+            } else {
+                window.showToast('QR Code lido, mas não contém o valor da nota. Insira o valor manualmente.', 'warning');
+            }
+        });
+
+        document.body.appendChild(createReceiptScannerOverlay());
+        document.body.classList.add('barcode-scanner-active');
+        document.documentElement.classList.add('barcode-scanner-active');
+        await scanner.startScan({ formats: ['QR_CODE'], lensFacing: 'BACK' });
+    } catch (error) {
+        console.error('Erro ao iniciar a leitura do QR Code:', error);
+        await finishReceiptQRScan(activeReceiptScan);
+        window.showToast('Não foi possível iniciar a câmera. Verifique a permissão e tente novamente.', 'error');
     }
 };
 

@@ -168,9 +168,24 @@ Ao abrir o app, uma animação usa a identidade visual do Kaizen Finanças. O bo
 
 Como o Capacitor carrega o site publicado no Firebase Hosting, publique as alterações web com `firebase deploy --only hosting`. Para incluir plugins nativos atualizados no APK, execute `npm run android:sync` e gere uma nova versão do app.
 
+O leitor de QR Code da nota fiscal usa `@capacitor-mlkit/barcode-scanning` no app Android. No primeiro uso, o sistema solicita acesso à câmera; no navegador, o leitor nativo não está disponível. Quando o QR contém um valor explícito (por exemplo, em um QR Pix ou em parâmetros de valor reconhecidos), o formulário preenche o valor em reais; códigos fiscais que contêm apenas um link ou uma chave da nota não incluem o total, então o valor precisa ser informado manualmente.
+
 As notificações nativas usam o plugin `@capacitor/local-notifications`. No primeiro uso, o app solicita a permissão do Android para enviar notificações.
 
 O login com Google usa autenticação nativa somente no Android e mantém `signInWithPopup` no navegador. Para habilitar o login nativo em um dispositivo, é necessário ativar o provedor Google no Firebase, cadastrar o SHA-1 do certificado Android e adicionar o `google-services.json` correspondente ao projeto em `android/app/`.
+
+### APK release assinado
+
+A chave de release é exclusiva e deve ser mantida em backup seguro. Todas as atualizações instaláveis sobre essa versão precisam ser assinadas com a mesma chave. Não versione o keystore nem as senhas.
+
+O Gradle lê `KAIZEN_RELEASE_STORE_FILE`, `KAIZEN_RELEASE_STORE_PASSWORD`, `KAIZEN_RELEASE_KEY_ALIAS` e `KAIZEN_RELEASE_KEY_PASSWORD` de propriedades locais do Gradle ou variáveis de ambiente. No Windows, as propriedades podem ficar no arquivo `%USERPROFILE%\.gradle\gradle.properties`, fora do repositório. Gere o release com:
+
+```powershell
+cd android
+.\gradlew.bat assembleRelease
+```
+
+O APK assinado será criado em `android/app/build/outputs/apk/release/app-release.apk`. Cadastre também no Firebase o SHA-1 e SHA-256 do certificado de release para manter o login com Google nessa versão.
 
 ### Notificações push com OneSignal
 

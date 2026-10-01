@@ -2828,6 +2828,111 @@ body.dark-mode .mobile-header h2 {
     }
 }
 
+html.barcode-scanner-active,
+body.barcode-scanner-active {
+    background: transparent !important;
+}
+
+body.barcode-scanner-active > *:not(#qrScannerOverlay) {
+    visibility: hidden !important;
+}
+
+body.barcode-scanner-active > #qrScannerOverlay {
+    visibility: visible !important;
+}
+
+.qr-scanner-overlay {
+    position: fixed;
+    z-index: 20000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(4, 7, 18, 0.16);
+    color: #fff;
+}
+
+.qr-scanner-panel {
+    display: flex;
+    width: min(100%, 380px);
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    padding: 26px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 22px;
+    background: rgba(8, 13, 30, 0.84);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.34);
+    text-align: center;
+    backdrop-filter: blur(8px);
+}
+
+.qr-scanner-panel p {
+    color: #edf0ff;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.qr-scanner-reticle {
+    position: relative;
+    width: min(64vw, 245px);
+    aspect-ratio: 1;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 20px;
+}
+
+.qr-scanner-reticle span {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-color: #cf72ff;
+    border-style: solid;
+}
+
+.qr-scanner-reticle span:nth-child(1) {
+    top: -1px;
+    left: -1px;
+    border-width: 3px 0 0 3px;
+    border-top-left-radius: 18px;
+}
+
+.qr-scanner-reticle span:nth-child(2) {
+    top: -1px;
+    right: -1px;
+    border-width: 3px 3px 0 0;
+    border-top-right-radius: 18px;
+}
+
+.qr-scanner-reticle span:nth-child(3) {
+    right: -1px;
+    bottom: -1px;
+    border-width: 0 3px 3px 0;
+    border-bottom-right-radius: 18px;
+}
+
+.qr-scanner-reticle span:nth-child(4) {
+    bottom: -1px;
+    left: -1px;
+    border-width: 0 0 3px 3px;
+    border-bottom-left-radius: 18px;
+}
+
+.qr-scanner-cancel {
+    min-height: 44px;
+    padding: 9px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.qr-scanner-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
 @media (max-width: 768px) {
     html,
     body,
