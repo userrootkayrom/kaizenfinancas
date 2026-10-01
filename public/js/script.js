@@ -416,16 +416,18 @@ window.togglePrivacyMode = function () {
 document.addEventListener('DOMContentLoaded', () => {
     initializeBackNavigation();
     const savedTheme = localStorage.getItem('theme');
-loadRecurringRules();
-applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches));
-updateCategoryDropdowns();
-window.toggleTransferFields();
-initCharts();
-renderRecurringRules();
-renderCashFlowForecast();
-renderFinancialHealth();
+    const themePreferenceVersion = localStorage.getItem('kaizenThemePreferenceVersion');
+    loadRecurringRules();
+    applyTheme(themePreferenceVersion === '2' ? savedTheme !== 'light' : true);
+    localStorage.setItem('kaizenThemePreferenceVersion', '2');
+    updateCategoryDropdowns();
+    window.toggleTransferFields();
+    initCharts();
+    renderRecurringRules();
+    renderCashFlowForecast();
+    renderFinancialHealth();
 
-const startInput = document.getElementById('startDateFilter');
+    const startInput = document.getElementById('startDateFilter');
     const endInput = document.getElementById('endDateFilter');
     if (startInput) startInput.value = currentStartDate;
     if (endInput) endInput.value = currentEndDate;
@@ -710,6 +712,29 @@ function renderFinancialHealth() {
             <span class="health-meta">${item.meta}</span>
         </div>
     `).join('');
+}
+
+function calculateAccountBalances(items, cutoffDate) {
+    const balances = Object.create(null);
+
+    items.forEach(item => {
+        if (!item.date || item.date > cutoffDate || (item.status && item.status !== 'pago')) return;
+
+        const account = item.account || 'Outros';
+        const value = parseFloat(item.value || item.amount || 0);
+        if (item.type === 'transfer') {
+            const source = item.fromAccount || account;
+            const target = item.toAccount || account;
+            balances[source] = (balances[source] || 0) - value;
+            balances[target] = (balances[target] || 0) + value;
+            return;
+        }
+
+        const isIncome = item.type === 'income' || item.type === 'entrada';
+        balances[account] = (balances[account] || 0) + (isIncome ? value : -value);
+    });
+
+    return balances;
 }
 
 function renderInvestments() {
@@ -1187,7 +1212,9 @@ function renderDashboard() {
 
     let totalIncome = 0; let totalExpense = 0;
     let pendingIncTotal = 0; let pendingExpTotal = 0;
-    const accountsBalance = {};
+    const today = new Date();
+    const balanceCutoffDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const accountsBalance = calculateAccountBalances(transactions, balanceCutoffDate);
 
     const pendingIncomeList = document.getElementById('pendingIncomeList');
     const pendingExpenseList = document.getElementById('pendingExpenseList');
@@ -1204,12 +1231,6 @@ function renderDashboard() {
         if (isTransfer) {
             const source = item.fromAccount || acc;
             const target = item.toAccount || acc;
-            if (!accountsBalance[source]) accountsBalance[source] = 0;
-            if (!accountsBalance[target]) accountsBalance[target] = 0;
-            if (isPaid) {
-                accountsBalance[source] -= val;
-                accountsBalance[target] += val;
-            }
             if (tableBody) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -1233,11 +1254,9 @@ function renderDashboard() {
             return;
         }
 
-        if (!accountsBalance[acc]) accountsBalance[acc] = 0;
-
         if (isPaid) {
-            if (isIncome) { accountsBalance[acc] += val; totalIncome += val; }
-            else { accountsBalance[acc] -= val; totalExpense += val; }
+            if (isIncome) totalIncome += val;
+            else totalExpense += val;
         } else {
             const targetDate = item.dueDate || item.date;
             let dueDateStr = targetDate ? ` (Venc: ${formatDateBR(targetDate)})` : '';
@@ -1314,20 +1333,87 @@ function initCharts() {
     const ctxLineEl = document.getElementById('lineChart');
     if (ctxLineEl && !myLineChart) {
         myLineChart = new Chart(ctxLineEl.getContext('2d'), {
-            type: 'bar',
+            type: 'line',
             data: {
                 labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
                 datasets: [
-                    { label: 'Entradas', data: Array(12).fill(0), backgroundColor: '#10b981' },
-                    { label: 'Saídas', data: Array(12).fill(0), backgroundColor: '#ef4444' }
+                    {
+                        label: 'Entradas',
+                        data: Array(12).fill(0),
+                        borderColor: '#22d3ee',
+                        backgroundColor: 'rgba(34, 211, 238, 0.12)',
+                        pointBackgroundColor: '#22d3ee',
+                        pointBorderColor: '#0b1530',
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Saídas',
+                        data: Array(12).fill(0),
+                        borderColor: '#c084fc',
+                        backgroundColor: 'rgba(192, 132, 252, 0.1)',
+                        pointBackgroundColor: '#c084fc',
+                        pointBorderColor: '#0b1530',
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }
                 ]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: { color: '#aab6d0', usePointStyle: true, pointStyle: 'circle', boxWidth: 8, padding: 18 }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, border: { display: false }, ticks: { color: '#7f8ba8' } },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(148, 163, 184, 0.09)' },
+                        border: { display: false },
+                        ticks: { color: '#7f8ba8', maxTicksLimit: 5 }
+                    }
+                }
+            }
         });
     }
     const ctxPieEl = document.getElementById('pieChart');
     if (ctxPieEl && !myPieChart) {
-        myPieChart = new Chart(ctxPieEl.getContext('2d'), { type: 'doughnut', data: { labels: [], datasets: [{ data: [], backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#64748b', '#ef4444'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+        myPieChart = new Chart(ctxPieEl.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: ['#c084fc', '#22d3ee', '#818cf8', '#f472b6', '#34d399', '#fbbf24'],
+                    borderColor: '#10182d',
+                    borderWidth: 3,
+                    hoverOffset: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#aab6d0', usePointStyle: true, pointStyle: 'circle', boxWidth: 8, padding: 16 }
+                    }
+                }
+            }
+        });
     }
 }
 
@@ -1448,7 +1534,11 @@ window.switchTab = function (tabId, { recordHistory = true } = {}) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     target.classList.add('active');
     document.querySelectorAll('[data-tab]').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll(`[data-tab="${tabId}"]`).forEach(btn => btn.classList.add('active'));
+    document.querySelectorAll(`[data-tab="${tabId}"]`).forEach(btn => {
+        btn.classList.add('active');
+        btn.setAttribute('aria-current', 'page');
+    });
+    document.querySelectorAll(`[data-tab]:not([data-tab="${tabId}"])`).forEach(btn => btn.removeAttribute('aria-current'));
     if (tabId === 'annual' && typeof window.renderAnnualReport === 'function') window.renderAnnualReport();
     if (tabId === 'dashboard') {
         const today = new Date();

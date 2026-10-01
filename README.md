@@ -25,7 +25,9 @@ Este projeto foi desenvolvido para centralizar o controle de finanças pessoais 
 
 ### Dashboard financeiro
 
+- dashboard com tema escuro, destaques em violeta e ciano, gráficos de alto contraste e navegação adaptada a desktop e dispositivos móveis;
 - visão consolidada de saldo, entradas e saídas;
+- saldo real acumulado com os valores remanescentes dos meses anteriores; entradas e saídas continuam mostrando o período selecionado;
 - projeção financeira do período atual;
 - gráficos comparativos mensais;
 - indicadores de contas pendentes e alertas;

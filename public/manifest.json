@@ -4,8 +4,8 @@
   "description": "Sistema de Gestão Financeira Pessoal",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFFFFF",
-  "theme_color": "#000000",
+  "background_color": "#080d1e",
+  "theme_color": "#080d1e",
   "orientation": "portrait",
   "icons": [
     {

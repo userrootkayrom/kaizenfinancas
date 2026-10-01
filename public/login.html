@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Login - Sistema Financeiro</title>
+    <title>Entrar | Kaizen Finanças</title>
+    <link rel="icon" type="image/png" href="/icons/icon-192x192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <meta name="theme-color" content="#3b82f6">
+    <meta name="theme-color" content="#102a43">
     <style>
         :root {
             --primary: #3b82f6;
@@ -178,13 +181,186 @@
         .divider:not(:empty)::after {
             margin-left: .25em;
         }
+
+        body {
+            position: relative;
+            overflow-x: hidden;
+            background:
+                radial-gradient(ellipse at 14% 12%, rgba(37, 99, 235, 0.22), transparent 35%),
+                radial-gradient(ellipse at 88% 90%, rgba(16, 185, 129, 0.14), transparent 30%),
+                #f2f6fb;
+            color: #14253d;
+        }
+
+        body::before {
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(16, 42, 67, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 42, 67, 0.025) 1px, transparent 1px);
+            background-size: 38px 38px;
+            content: "";
+            pointer-events: none;
+        }
+
+        .auth-container {
+            position: relative;
+            z-index: 1;
+            padding: clamp(1.75rem, 6vw, 2.6rem);
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 28px 75px rgba(16, 42, 67, 0.13), 0 2px 8px rgba(16, 42, 67, 0.04);
+            backdrop-filter: blur(18px);
+            animation: auth-card-enter 0.5s ease-out both;
+        }
+
+        .auth-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .auth-header img {
+            width: 68px;
+            height: 68px;
+            margin-bottom: 13px;
+            border-radius: 19px;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+        }
+
+        .auth-header .auth-brand {
+            margin-bottom: 16px;
+            color: #2563eb;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .auth-header h2 {
+            color: #14253d;
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        .auth-header .auth-subtitle {
+            margin-top: 7px;
+            color: #718096;
+            font-size: 0.88rem;
+            line-height: 1.55;
+        }
+
+        .form-group label {
+            color: #33465f;
+        }
+
+        .form-group input {
+            min-height: 48px;
+            border-color: #dce4ee;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #14253d;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #3b82f6;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .forgot-password,
+        .auth-switch button {
+            color: #1d4ed8;
+            border: 0;
+            background: transparent;
+            transition: color 0.18s ease;
+        }
+
+        .forgot-password {
+            padding: 0;
+        }
+
+        .forgot-password:hover,
+        .auth-switch button:hover {
+            color: #0f766e;
+        }
+
+        .auth-switch button {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-auth,
+        .btn-google {
+            min-height: 48px;
+            border-radius: 10px;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+        }
+
+        .btn-auth {
+            background: linear-gradient(120deg, #1d4ed8, #2563eb 60%, #0f766e 150%);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-auth:hover:not(:disabled),
+        .btn-google:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 11px 22px rgba(16, 42, 67, 0.13);
+        }
+
+        .btn-auth:disabled,
+        .btn-google:disabled {
+            cursor: wait;
+            opacity: 0.7;
+        }
+
+        .btn-google {
+            border: 1px solid #dce4ee;
+            background: #fff;
+            color: #25364d;
+        }
+
+        .auth-switch,
+        .divider {
+            color: #718096;
+        }
+
+        button:focus-visible,
+        input:focus-visible,
+        a:focus-visible,
+        #switchText:focus-visible {
+            outline: 3px solid rgba(37, 99, 235, 0.42);
+            outline-offset: 3px;
+        }
+
+        @keyframes auth-card-enter {
+            from { opacity: 0; transform: translateY(10px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="auth-container">
-        <div class="auth-header"><i class="fas fa-wallet"></i>
+        <div class="auth-header">
+            <img src="/acet/icon-192x192.png" alt="Kaizen Finanças">
+            <span class="auth-brand">Kaizen Finanças</span>
             <h2 id="authTitle">Entrar no Sistema</h2>
+            <p class="auth-subtitle">Organize seu dinheiro. Evolua todos os dias.</p>
         </div>
         <div id="errorMessage" class="error-message"></div>
         <div id="successMessage" class="success-message"></div>
@@ -201,7 +377,7 @@
             <img src="https://img.ge/i/bX8Ao0.png" width="20" alt="Google">
             Entrar com Google
         </button>
-        <div class="auth-switch"><span id="switchText">Não tem conta? Criar conta grátis</span></div>
+        <div class="auth-switch"><button type="button" id="switchText">Não tem conta? Criar conta grátis</button></div>
     </div>
 
     <script type="module">

@@ -1,11 +1,11 @@
-const CACHE_NAME = 'kaizen-financas-v5';
+const CACHE_NAME = 'kaizen-financas-v10';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/login.html',
     '/css/style.css',
     '/js/firebase-init.js',
-    '/js/script.js?v=v5',
+    '/js/script.js?v=v9',
     '/icons/icon-192x192.png',
     '/acet/icon-192x192.png',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
