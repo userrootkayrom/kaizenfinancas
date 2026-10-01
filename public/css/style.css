@@ -1608,6 +1608,160 @@ body.dark-mode .skeleton::after {
     border-bottom: none;
 }
 
+/* ================= ANIMAÇÃO DE ABERTURA ================= */
+.app-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(59, 130, 246, 0.17), transparent 34%),
+        radial-gradient(circle at 82% 84%, rgba(16, 185, 129, 0.13), transparent 32%),
+        #f8fafc;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+body.dark-mode .app-intro {
+    background:
+        radial-gradient(circle at 18% 18%, rgba(59, 130, 246, 0.2), transparent 34%),
+        radial-gradient(circle at 82% 84%, rgba(16, 185, 129, 0.12), transparent 32%),
+        #07111d;
+}
+
+.app-intro.app-intro-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.app-intro-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: intro-content-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.app-intro-logo {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    width: 116px;
+    height: 116px;
+    margin-bottom: 24px;
+    border-radius: 34px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.88));
+    box-shadow: 0 22px 55px rgba(37, 99, 235, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.1);
+    animation: intro-logo-float 2.2s ease-in-out infinite;
+}
+
+body.dark-mode .app-intro-logo {
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.96));
+}
+
+.app-intro-logo img {
+    width: 78px;
+    height: 78px;
+    object-fit: contain;
+    border-radius: 20px;
+}
+
+.app-intro-orbit {
+    position: absolute;
+    z-index: -1;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 50%;
+    animation: intro-orbit-pulse 2.2s ease-out infinite;
+}
+
+.app-intro-orbit-one {
+    inset: -12px;
+}
+
+.app-intro-orbit-two {
+    inset: -24px;
+    animation-delay: 0.6s;
+}
+
+.app-intro-name {
+    color: #0f172a;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.06em;
+}
+
+body.dark-mode .app-intro-name {
+    color: #f8fafc;
+}
+
+.app-intro-name span {
+    color: #2563eb;
+}
+
+.app-intro-tagline {
+    margin-top: 7px;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+body.dark-mode .app-intro-tagline {
+    color: #94a3b8;
+}
+
+.app-intro-progress {
+    width: 112px;
+    height: 4px;
+    margin-top: 28px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.14);
+}
+
+.app-intro-progress span {
+    display: block;
+    width: 42%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #2563eb, #10b981);
+    animation: intro-progress 1.2s ease-in-out infinite;
+}
+
+@keyframes intro-content-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes intro-logo-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes intro-orbit-pulse {
+    0% { opacity: 0.65; transform: scale(0.92); }
+    100% { opacity: 0; transform: scale(1.08); }
+}
+
+@keyframes intro-progress {
+    0% { transform: translateX(-110%); }
+    100% { transform: translateX(250%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-intro-content,
+    .app-intro-logo,
+    .app-intro-orbit,
+    .app-intro-progress span {
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+    }
+}
+
 .alert-item strong {
     display: block;
     color: var(--text-main);

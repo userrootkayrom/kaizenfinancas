@@ -27,6 +27,27 @@
 </head>
 
 <body>
+    <div class="app-intro" id="app-intro" role="status" aria-label="Abrindo Kaizen Finanças">
+        <div class="app-intro-content">
+            <div class="app-intro-logo">
+                <span class="app-intro-orbit app-intro-orbit-one"></span>
+                <span class="app-intro-orbit app-intro-orbit-two"></span>
+                <img src="/acet/icon-192x192.png" alt="">
+            </div>
+            <div class="app-intro-name">Kaizen <span>Finanças</span></div>
+            <p class="app-intro-tagline">Sua vida financeira em evolução</p>
+            <div class="app-intro-progress" aria-hidden="true"><span></span></div>
+        </div>
+    </div>
+    <script>
+        window.setTimeout(() => {
+            const intro = document.getElementById('app-intro');
+            if (!intro) return;
+            intro.classList.add('app-intro-hidden');
+            intro.addEventListener('transitionend', () => intro.remove(), { once: true });
+            window.setTimeout(() => intro.remove(), 500);
+        }, 1500);
+    </script>
     <header class="mobile-header">
         <img src="/acet/icon-32x32.png" alt="Kaizen Finanças">
         <h2>Kaizen Finanças</h2>
@@ -1132,7 +1153,7 @@
     </div>
     <!-- Script Modular Principa
      l -->
-    <script type="module" src="/js/script.js?v=v4"></script>
+    <script type="module" src="/js/script.js?v=v5"></script>
     
 </body>
 

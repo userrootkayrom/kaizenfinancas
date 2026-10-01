@@ -414,6 +414,7 @@ window.togglePrivacyMode = function () {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    initializeBackNavigation();
     const savedTheme = localStorage.getItem('theme');
 loadRecurringRules();
 applyTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches));
@@ -1371,9 +1372,81 @@ window.showToast = function (message, type = 'success') {
     setTimeout(() => toast.remove(), 3000);
 };
 
-window.switchTab = function (tabId) {
+function getActiveTabId() {
+    return document.querySelector('.tab-content.active')?.id || 'dashboard';
+}
+
+function initializeBackNavigation() {
+    const activeTabId = getActiveTabId();
+    window.history.replaceState({
+        ...window.history.state,
+        kaizenTab: activeTabId,
+        kaizenNavigationIndex: 0
+    }, '');
+
+    window.addEventListener('popstate', (event) => {
+        const tabId = event.state?.kaizenTab;
+        if (typeof tabId === 'string' && document.getElementById(tabId)?.classList.contains('tab-content')) {
+            window.switchTab(tabId, { recordHistory: false });
+        }
+    });
+
+    if (!window.Capacitor?.isNativePlatform?.()) return;
+
+    const app = window.Capacitor.Plugins?.App || window.Capacitor.registerPlugin?.('App');
+    if (!app?.addListener) {
+        console.error('O plugin App do Capacitor não está disponível para o botão Voltar.');
+        return;
+    }
+
+    try {
+        Promise.resolve(app.addListener('backButton', handleBackButton))
+            .catch(error => console.error('Erro ao registrar o botão Voltar:', error));
+    } catch (error) {
+        console.error('Erro ao registrar o botão Voltar:', error);
+    }
+}
+
+function handleBackButton() {
+    const activeModals = document.querySelectorAll('.modal-overlay.active');
+    const topModal = activeModals[activeModals.length - 1];
+    if (topModal) {
+        const closeControl = topModal.querySelector('.close-btn, .btn-secondary');
+        if (closeControl) {
+            closeControl.addEventListener('click', event => event.preventDefault(), { once: true });
+            closeControl.click();
+        } else {
+            topModal.classList.remove('active');
+        }
+        return;
+    }
+
+    const alertsDropdown = document.getElementById('alertsDropdown');
+    if (alertsDropdown?.classList.contains('active')) {
+        alertsDropdown.classList.remove('active');
+        return;
+    }
+
+    if (window.history.state?.kaizenNavigationIndex > 0) {
+        window.history.back();
+    }
+}
+
+window.switchTab = function (tabId, { recordHistory = true } = {}) {
+    const target = document.getElementById(tabId);
+    if (!target?.classList.contains('tab-content')) return;
+
+    const previousTabId = getActiveTabId();
+    if (recordHistory && previousTabId !== tabId) {
+        window.history.pushState({
+            ...window.history.state,
+            kaizenTab: tabId,
+            kaizenNavigationIndex: (window.history.state?.kaizenNavigationIndex || 0) + 1
+        }, '');
+    }
+
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    const target = document.getElementById(tabId); if (target) target.classList.add('active');
+    target.classList.add('active');
     document.querySelectorAll('[data-tab]').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll(`[data-tab="${tabId}"]`).forEach(btn => btn.classList.add('active'));
     if (tabId === 'annual' && typeof window.renderAnnualReport === 'function') window.renderAnnualReport();

@@ -162,6 +162,10 @@ cd android
 ./gradlew assembleDebug
 ```
 
+Ao abrir o app, uma animação usa a identidade visual do Kaizen Finanças. O botão Voltar do Android fecha primeiro um modal ou o menu de alertas e, em seguida, retorna pelas abas visitadas; no Dashboard inicial, permanece no app.
+
+Como o Capacitor carrega o site publicado no Firebase Hosting, publique as alterações web com `firebase deploy --only hosting`. Para incluir plugins nativos atualizados no APK, execute `npm run android:sync` e gere uma nova versão do app.
+
 As notificações nativas usam o plugin `@capacitor/local-notifications`. No primeiro uso, o app solicita a permissão do Android para enviar notificações.
 
 O login com Google usa autenticação nativa somente no Android e mantém `signInWithPopup` no navegador. Para habilitar o login nativo em um dispositivo, é necessário ativar o provedor Google no Firebase, cadastrar o SHA-1 do certificado Android e adicionar o `google-services.json` correspondente ao projeto em `android/app/`.

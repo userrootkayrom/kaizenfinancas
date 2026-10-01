@@ -13,6 +13,7 @@
     "@capacitor-firebase/authentication": "^7.5.0",
     "@capacitor-mlkit/barcode-scanning": "^7.5.0",
     "@capacitor/android": "^7.4.3",
+    "@capacitor/app": "^7.1.2",
     "@capacitor/core": "^7.4.3",
     "@capacitor/local-notifications": "^7.0.2",
     "@onesignal/capacitor-plugin": "^1.1.12"
