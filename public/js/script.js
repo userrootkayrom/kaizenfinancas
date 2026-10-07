@@ -716,11 +716,15 @@ function renderFinancialHealth() {
     `).join('');
 }
 
-function calculateAccountBalances(items, cutoffDate) {
+function calculateAccountBalances(items, cutoffDate, startDate = null, endDate = null) {
     const balances = Object.create(null);
 
     items.forEach(item => {
-        if (!item.date || item.date > cutoffDate || (item.status && item.status !== 'pago')) return;
+        if (!item.date) return;
+        if (item.date > cutoffDate) return;
+        if (startDate && item.date < startDate) return;
+        if (endDate && item.date > endDate) return;
+        if (item.status && item.status !== 'pago') return;
 
         const account = item.account || 'Outros';
         const value = parseFloat(item.value || item.amount || 0);
@@ -1216,7 +1220,13 @@ function renderDashboard() {
     let pendingIncTotal = 0; let pendingExpTotal = 0;
     const today = new Date();
     const balanceCutoffDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    const accountsBalance = calculateAccountBalances(transactions, balanceCutoffDate);
+    const useSelectedPeriod = !isHistoryTabActive && currentStartDate && currentEndDate;
+    const accountsBalance = calculateAccountBalances(
+        transactions,
+        balanceCutoffDate,
+        useSelectedPeriod ? currentStartDate : null,
+        useSelectedPeriod ? currentEndDate : null
+    );
 
     const pendingIncomeList = document.getElementById('pendingIncomeList');
     const pendingExpenseList = document.getElementById('pendingExpenseList');
