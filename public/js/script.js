@@ -450,6 +450,10 @@ const formatMoney = (value) => {
     return parseFloat(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 };
 const formatDateBR = (dateString) => { if (!dateString) return ''; const [year, month, day] = dateString.split('-'); return `${day}/${month}/${year}`; };
+const isManualBalanceAdjustment = (item) => {
+    if (!item) return false;
+    return item.hidden === true || item.category === 'Ajuste de Saldo' || item.desc === 'Ajuste de Saldo Manual';
+};
 
 // ================= RENDERIZADORES COMPLEMENTARES =================
 function renderBudgets() {
@@ -610,7 +614,7 @@ function renderCashFlowForecast() {
     let currentBalance = Object.values((function () {
         const acc = {};
         transactions.forEach(item => {
-            if (!item.account) return;
+            if (!item.account || isManualBalanceAdjustment(item)) return;
             const val = parseFloat(item.value || item.amount || 0);
             if (item.type === 'income' || item.type === 'entrada') {
                 acc[item.account] = (acc[item.account] || 0) + val;
@@ -630,7 +634,7 @@ function renderCashFlowForecast() {
         let monthlyExpense = 0;
 
         transactions.forEach(item => {
-            if (!item.date || item.status === 'pendente') return;
+            if (!item.date || isManualBalanceAdjustment(item) || item.status === 'pendente') return;
             const itemDate = new Date(item.date + 'T00:00:00');
             if (itemDate.getFullYear() === date.getFullYear() && itemDate.getMonth() === date.getMonth()) {
                 const value = parseFloat(item.value || item.amount || 0);
@@ -684,7 +688,7 @@ function renderFinancialHealth() {
     const container = document.getElementById('financialHealthGrid');
     if (!container) return;
 
-    const paidTransactions = transactions.filter(item => item.status === 'pago' || !item.status);
+    const paidTransactions = transactions.filter(item => !isManualBalanceAdjustment(item) && (item.status === 'pago' || !item.status));
     const incomeTotal = paidTransactions.filter(item => item.type === 'income' || item.type === 'entrada').reduce((sum, item) => sum + parseFloat(item.value || item.amount || 0), 0);
     const expenseTotal = paidTransactions.filter(item => item.type === 'expense' || item.type === 'saida').reduce((sum, item) => sum + parseFloat(item.value || item.amount || 0), 0);
     const debtTotal = debts.reduce((sum, item) => sum + parseFloat(item.total || 0), 0);
@@ -721,6 +725,7 @@ function calculateAccountBalances(items, cutoffDate, startDate = null, endDate =
 
     items.forEach(item => {
         if (!item.date) return;
+        if (isManualBalanceAdjustment(item)) return;
         if (item.date > cutoffDate) return;
         if (startDate && item.date < startDate) return;
         if (endDate && item.date > endDate) return;
@@ -778,7 +783,7 @@ window.renderAnnualReport = function () {
     const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
     const monthlySummary = Array(12).fill(0).map(() => ({ income: 0, expense: 0 }));
     transactions.forEach(t => {
-        if (!t.date || t.category === 'Ajuste de Saldo' || t.type === 'transfer' || t.status === 'pendente') return;
+        if (!t.date || isManualBalanceAdjustment(t) || t.type === 'transfer' || t.status === 'pendente') return;
         if (!t.date.startsWith(selectedYear)) return;
         const monthIndex = parseInt(t.date.split('-')[1], 10) - 1;
         const val = parseFloat(t.value || t.amount || 0);
@@ -1178,6 +1183,7 @@ window.saveNewBalance = async function () {
             userId: currentUser.uid, type, status: 'pago',
             desc: 'Ajuste de Saldo Manual', value,
             category: 'Ajuste de Saldo',
+            hidden: true,
             date: new Date().toISOString().split('T')[0],
             account: accountBeingEdited
         });
@@ -1196,7 +1202,7 @@ function renderDashboard() {
     const isHistoryTabActive = document.getElementById('history')?.classList.contains('active');
 
     filteredTransactions = transactions.filter(t => {
-        if (!t.date) return false;
+        if (!t.date || isManualBalanceAdjustment(t)) return false;
         if (!isHistoryTabActive && currentStartDate && currentEndDate && (t.date < currentStartDate || t.date > currentEndDate)) return false;
 
         if (typeF && t.type !== typeF) return false;
@@ -1437,7 +1443,7 @@ function updateCharts() {
     const expensesByCategory = {};
 
     filteredTransactions.forEach(t => {
-        if (!t.date || t.type === 'transfer') return;
+        if (!t.date || isManualBalanceAdjustment(t) || t.type === 'transfer') return;
         const month = parseInt(t.date.split('-')[1], 10) - 1;
         const val = parseFloat(t.value || t.amount || 0);
 
