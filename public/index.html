@@ -1014,8 +1014,27 @@
             <form id="investmentForm" onsubmit="event.preventDefault(); window.saveInvestment();">
                 <div class="form-group"><label>Nome</label><input type="text" id="invNameInput" required></div>
                 <div class="form-group"><label>Classe</label><select id="invClassInput">
-                        <option value="Ações">Ações</option>
-                        <option value="Renda Fixa">Renda Fixa</option>
+                        <optgroup label="Renda Variável">
+                            <option value="Ações">Ações</option>
+                            <option value="FIIs">Fundos Imobiliários (FIIs)</option>
+                            <option value="ETFs">ETFs</option>
+                            <option value="BDRs">BDRs</option>
+                            <option value="Criptomoedas">Criptomoedas</option>
+                        </optgroup>
+                        <optgroup label="Renda Fixa">
+                            <option value="Renda Fixa">Renda Fixa</option>
+                            <option value="CDB">CDB</option>
+                            <option value="Tesouro Direto">Tesouro Direto</option>
+                            <option value="LCI/LCA">LCI/LCA</option>
+                            <option value="Debêntures">Debêntures</option>
+                        </optgroup>
+                        <optgroup label="Fundos">
+                            <option value="Fundos de Investimento">Fundos de Investimento</option>
+                        </optgroup>
+                        <optgroup label="Outros">
+                            <option value="Poupança">Poupança</option>
+                            <option value="Previdência Privada">Previdência Privada (PGBL/VGBL)</option>
+                        </optgroup>
                     </select></div>
                 <div class="form-row">
                     <div class="form-group"><label>Qtd</label><input type="number" id="invQtyInput" step="any" required>
